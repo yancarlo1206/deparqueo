@@ -1,0 +1,53 @@
+<div class="container-fluid">
+
+  <div class="card shadow mb-4">
+  <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">Informaci&oacute;n de Anulaci&oacute;n</h6>
+  </div>
+    <div class="card-body">
+      <form class="needs-validation" novalidate method="post">
+        <input type="hidden" name="guardar" value="1">
+        <input type="hidden" name="ingreso" value="<?php echo $this->ticket->getId() ?>">
+        <div class="form-row">
+          <div class="form-group col-md-12">
+            <label>Ticket</label>
+            <input name="ticket" type="text" class="form-control" value="<?php echo $this->ticket->getNumero() ?>" disabled>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-12">
+            <label>Observaci&oacute;n</label>
+            <textarea name="observacion" type="text" class="form-control" value="" maxlength="300" rows="4" required></textarea>
+          </div>
+        </div>
+        <div class="float-right">
+          <button type="submit" class="btn btn-primary">Registrar Anulaci&oacute;n</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+</div>
+
+<script>
+// Example starter JavaScript for disabling form submissions if there are invalid fields
+(function() {
+  'use strict';
+  window.addEventListener('load', function() {
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    var forms = document.getElementsByClassName('needs-validation');
+    // Loop over them and prevent submission
+    var validation = Array.prototype.filter.call(forms, function(form) {
+      form.addEventListener('submit', function(event) {
+        if (form.checkValidity() === false) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  }, false);
+})();
+</script>

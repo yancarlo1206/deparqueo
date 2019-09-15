@@ -1,0 +1,86 @@
+<div class="container-fluid">
+
+  <div class="card shadow mb-4">
+  <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">Registrar Cliente</h6>
+  </div>
+    <div class="card-body">
+      <form class="needs-validation" novalidate method="post"> 
+        <input type="hidden" name="guardar" value="1">
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label>Documento</label>
+            <input name="documento" type="text" class="form-control" value="<?php if(isset($this->dato)){ echo $this->dato->getDocumento(); } ?>" required>
+          </div>
+          <div class="form-group col-md-6">
+            <label>Nombre</label>
+            <input name="nombre" type="text" class="form-control" value="<?php if(isset($this->dato)){ echo $this->dato->getNombre(); } ?>" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label>Fecha Nacimiento</label>
+            <input name="fechaNacimiento" type="text" class="form-control datepicker" value="<?php if(isset($this->dato)){ echo $this->dato->getFechaNacimiento()->format('d/m/Y'); } ?>" required>
+          </div>
+          <div class="form-group col-md-6">
+            <label>Direccion</label>
+            <input name="direccion" type="text" class="form-control" value="<?php if(isset($this->dato)){ echo $this->dato->getDireccion(); } ?>" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label>Telefono</label>
+            <input name="telefono" type="text" class="form-control" value="<?php if(isset($this->dato)){ echo $this->dato->getTelefono(); } ?>" required>
+          </div>
+          <div class="form-group col-md-6">
+            <label>Correo</label>
+            <input name="correo" type="text" class="form-control" value="<?php if(isset($this->dato)){ echo $this->dato->getEmail(); } ?>" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-12">
+            <label>Tipo Cliente</label>
+            <?php $tipoCliente = ""; ?>
+            <?php if(isset($this->dato)){ $tipoCliente = $this->dato->getTipoCliente()->getId(); } ?>
+            <?php echo $this->combobox("tipoCliente", "Seleccione...", $this->tipoClientes, $tipoCliente, "getId", "getDescripcion", "class='form-control show-tick' data-live-search='true' required","getDescripcion"); ?>
+          </div>
+        </div>
+
+        <p class="text-right comentario">
+          Los campos marcados con <span class="span">*</span> son obligatorios.
+        </p>
+        <div class="float-right">
+          <button type="submit" class="btn btn-primary" ><?php echo ucwords($this->_presentRequest->getMetodo()); ?> </button> 
+          <a class="btn btn-primary" href="<?php echo BASE_URL.$this->_presentRequest->getControlador().'/'; ?>">Listado</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+</div>
+
+<script>
+// Example starter JavaScript for disabling form submissions if there are invalid fields
+(function() {
+  'use strict';
+  window.addEventListener('load', function() {
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    var forms = document.getElementsByClassName('needs-validation');
+    // Loop over them and prevent submission
+    var validation = Array.prototype.filter.call(forms, function(form) {
+      form.addEventListener('submit', function(event) {
+        if (form.checkValidity() === false) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  }, false);
+})();
+</script>

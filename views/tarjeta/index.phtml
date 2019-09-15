@@ -1,0 +1,74 @@
+<div class="container-fluid">
+
+        <!-- Page Heading -->
+        <h1 class="h3 mb-2 text-gray-800">Listado de Tarjetas</h1>
+        <!-- DataTales Example -->
+
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <div class="float-sm-right">
+              <a href="<?php echo BASE_URL ?>tarjeta/agregar/" class="btn btn-primary btn-icon-split">
+                <span class="icon text-white-50">
+                  <i class="fas fa-check"></i>
+                </span>
+                <span class="text">Registrar Tarjeta</span>
+              </a>
+            </div>
+          </div>
+          <div class="card-body">
+            <?php if(isset($this->datos) && count($this->datos)){?>
+            <div class="table-responsive">
+              <table class="table table-bordered" id="dataTableEsp" width="100%" cellspacing="0">
+                <thead>
+                  <tr>
+                    <th>RFID</th>
+                    <th>Cliente</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Fin</th>
+                    <th>Tipo Vehiculo</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tfoot>
+                  <tr>
+                    <th>RFID</th>
+                    <th>Cliente</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Fin</th>
+                    <th>Tipo Vehiculo</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </tfoot>
+                <tbody>
+                  <?php foreach ($this->datos as $key => $value) { ?>
+                  <tr>
+                    <td><?php echo $value->getRfid(); ?></td>
+                    <td><?php echo $value->getCliente()->getDocumento()."-".$value->getCliente()->getNombre(); ?></td>
+                    <td><?php echo $value->getFechaInicio()->format('d/m/Y'); ?></td>
+                    <td><?php echo $value->getFechaFin()->format('d/m/Y'); ?></td>
+                    <td><?php echo $value->getTipoVehiculo()->getDescripcion(); ?></td>
+                    <td>
+                      <?php if($value->getEstado()) echo "ACTIVO"; else echo "INACTIVO"; ?>
+                      </td>
+                    <td class="text-center">
+                      <a title="Actualizar" href="<?php echo BASE_URL.$this->_presentRequest->getControlador().'/'; ?>actualizar/<?php echo $value->getRfid(); ?>/"><i class="fas fa-edit"></i></a>
+                    </td>
+                  </tr>
+                  <?php } ?>
+                </tbody>
+              </table>
+            </div>
+            <?php }else{ ?>
+              <div class="alert alert-warning" role="alert">
+               No hay clientes registrados.
+              </div>
+            <?php } ?>
+          </div>
+        </div>
+
+      </div>
+
+
+</div>

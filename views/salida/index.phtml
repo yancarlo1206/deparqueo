@@ -1,0 +1,31 @@
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+  <!-- Page Heading -->
+  <h1 class="h3 mb-4 text-gray-800">Salida Parqueadero</h1>
+  <div class="row">
+    <div class="card-body">
+      <form method="post" action="<?php echo BASE_URL ?>salida/salidaNormal/">
+        <div class="input-group mb-3">
+          <input name="ticket" type="text" class="form-control form-control-lg" placeholder="Registrar Ticket">
+          <div class="input-group-append">
+            <button class="btn btn-success btn-lg" type="submit">Registrar</button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="card-body">
+      <form method="post" action="<?php echo BASE_URL ?>salida/salidaTarjeta/">
+        <div class="input-group mb-3">
+          <input name="tarjeta" type="text" class="form-control form-control-lg" placeholder="Registrar Tarjeta">
+          <div class="input-group-append">
+            <button class="btn btn-success btn-lg" type="submit">Registrar</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- /.container-fluid -->
+
+</div>

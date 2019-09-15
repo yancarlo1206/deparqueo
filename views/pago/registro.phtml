@@ -1,0 +1,83 @@
+<div class="container-fluid">
+
+  <div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Registro de Ticket</h6>
+    </div>
+    <div class="card-body">
+      <form>
+        <div class="input-group mb-3">
+          <input type="text" class="form-control form-control-lg" placeholder="Ingresar Ticket" id="inputTicket">
+          <div class="input-group-append">
+            <!-- <button class="btn btn-lg btn-primary" type="button" id="button-addon2">CALCULAR</button> -->
+            <a href="" class="btn btn-primary btn-icon-split btn-lg" id="btnCalcular">
+              <span class="icon text-white-50">
+                <i class="fas fa-arrow-right"></i>
+              </span>
+              <span class="text">CALCULAR</span>
+            </a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="alert alert-danger alert-dismissible fade show" role="alert" style="display:none">
+    <strong>Error !</strong> <span class="mensajeError"></span>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="card shadow mb-4">
+  <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">Informaci&oacute;n de Pago</h6>
+  </div>
+    <div class="card-body">
+      <form class="formPago" method="post">
+        <input type="hidden" name="guardar" value="1">
+        <input type="hidden" name="ingreso" value="">
+        <div class="form-row">
+          <div class="form-group col-md-3">
+            <label>Fecha</label>
+            <input name="fecha" type="text" class="form-control">
+          </div>
+          <div class="form-group col-md-3">
+            <label>Hora Inicio</label>
+            <input name="horaIni" type="text" class="form-control">
+          </div>
+          <div class="form-group col-md-3">
+            <label>Hora Fin</label>
+            <input name="horaFin" type="text" class="form-control">
+          </div>
+          <div class="form-group col-md-3">
+            <label>Tiempo Total</label>
+            <input name="tiempoTotal" type="text" class="form-control">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-3">
+            <label>Total a Pagar</label>
+            <input name="totalPagar" type="text" class="form-control text-left" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 0, 'digitsOptional': false, 'prefix': '$ ', 'placeholder': '0'">
+            <input type="hidden" name="totalPagarNumero" value="">
+          </div>
+          <div class="form-group col-md-3">
+            <label>Recibido</label>
+            <input name="recibido" type="text" class="form-control text-left" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 0, 'digitsOptional': false, 'prefix': '$ ', 'placeholder': '0'">
+          </div>
+          <div class="form-group col-md-3">
+            <label>A Devolver</label>
+            <input name="devolver" type="text" class="form-control text-left" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 0, 'digitsOptional': false, 'prefix': '$ ', 'placeholder': '0'">
+          </div>
+        </div>
+        <div class="float-right">
+          <button type="submit" class="btn btn-primary">Registrar Pago</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+</div>
