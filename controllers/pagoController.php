@@ -44,7 +44,13 @@ class pagoController extends Controller {
     public function registrar(){
     	if($this->getInt('guardar') == 1){
     		$this->_pago->getInstance()->setFecha(new \DateTime());
-    		$this->_pago->getInstance()->setValor($this->getPostParam('totalPagarNumero'));
+            $totalPagar = $this->getPostParam('totalPagarNumero');
+            $iva = $totalPagar * 0.16;
+            $valor = $totalPagar - $iva;
+    		$this->_pago->getInstance()->setValor($valor);
+            $this->_pago->getInstance()->setIva($iva);
+            $this->_pago->getInstance()->setEntrego($this->getPostParam('recibidoNumero'));
+            $this->_pago->getInstance()->setCambio($this->getPostParam('devolverNumero'));
     		$this->_pago->getInstance()->setIngreso($this->getInt('ingreso'));
     		$this->_pago->getInstance()->setUsuario($this->_usuario->get(Session::get('codigo')));
     		$this->_pago->getInstance()->setCaja($this->_caja->get(1));

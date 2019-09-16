@@ -30,7 +30,9 @@ jQuery(document).ready(function($) {
 	});
 	$(".formPago input[name='recibido']").keyup(function(){
     	if($(".formPago input[name='recibido']").val().length > 6){
+    		$(".formPago input[name='recibidoNumero']").val($(".formPago input[name='recibido']").val().substring(2).replace(',',''));
     		var devolver = $(".formPago input[name='recibido']").val().substring(2).replace(',','') - $(".formPago input[name='totalPagar']").val().substring(2).replace(',','');
+    		$(".formPago input[name='devolverNumero']").val(devolver);
     		$(".formPago input[name='devolver']").val(devolver);
     	}
 	});
