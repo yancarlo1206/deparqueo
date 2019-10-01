@@ -20,7 +20,8 @@
               <div class="input-group mb-3">
                 <input name="fecha" type="text" class="form-control datepicker" 
                   autocomplete="off" 
-                  value="<?php echo $this->fecha; ?>">
+                  value="<?php echo $this->fecha; ?>"
+                  readonly >
                 <div class="input-group-append">
                   <button class="btn btn-primary" type="submit">
                     <span class="icon text-white-50">
@@ -52,10 +53,12 @@
                 <tbody>
                   <?php foreach ($this->pagos as $key => $value) { ?>
                   <tr>
-                    <td><?php echo $value->getFecha()->format('d/m/Y'); ?></td>
-                    <td><?php echo $value->getIngreso(); ?></td>
-                    <td><?php echo $value->getValor(); ?></td>
-                    <td></td>
+                    <td><?php echo $value->getFecha()->format('d/m/Y h:i:s a'); ?></td>
+                    <td><?php echo $value->getIngreso()->getNumero(); ?></td>
+                    <td><?php echo $value->getValor()+$value->getIva(); ?></td>
+                    <td>
+                      <a title="Factura" href="<?php echo BASE_URL.$this->_presentRequest->getControlador().'/'; ?>generarFactura/<?php echo $value->getId(); ?>/"><i class="fas fa-edit"></i></a>
+                    </td>
                   </tr>
                   <?php } ?>
                 </tbody>

@@ -10,7 +10,13 @@
         <div class="form-row">
           <div class="form-group col-md-12">
             <label>RFID</label>
-            <input name="rfid" type="text" class="form-control" value="<?php if(isset($this->dato)){ echo $this->dato->getRfid(); } ?>" required>
+            <input 
+              name="rfid" 
+              type="text" 
+              class="form-control" 
+              value="<?php if(isset($this->dato)){ echo $this->dato->getRfid(); } ?>" 
+              required
+              maxlength="20" >
           </div>
           <div class="form-group col-md-12">
             <label>Cliente</label>
@@ -20,13 +26,15 @@
           </div>
           <div class="form-group col-md-6">
             <label>Fecha Inicio</label>
-            <input name="fechaInicio" 
+            <input 
+              name="fechaInicio" 
               type="text" 
               class="form-control datepicker" 
               data-date-format="dd/mm/yyyy"
               autocomplete="off"
               value="<?php if(isset($this->dato)){ echo $this->dato->getFechaInicio()->format('d/m/Y'); } ?>" 
-              required >
+              required 
+              readonly>
           </div>
           <div class="form-group col-md-6">
             <label>Fecha Fin</label>
@@ -36,7 +44,8 @@
               data-date-format="dd/mm/yyyy" 
               autocomplete="off"
               value="<?php if(isset($this->dato)){ echo $this->dato->getFechaFin()->format('d/m/Y'); } ?>" 
-              required >
+              required 
+              readonly >
           </div>
         </div>
 

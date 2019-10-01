@@ -9,6 +9,7 @@ class indexController extends Controller {
     public function index() {
     	$this->_view->titulo = '';
     	if(Session::get('autenticado')){
+            $this->_view->titulo = "Bienvenido";
             if(Session::get('level') == 'PORTERO'){
                 $this->redireccionar('ingreso');
             }else if(Session::get('level') == 'CAJERO'){
@@ -17,6 +18,7 @@ class indexController extends Controller {
                 $this->_view->renderizar('index', 'inicio');
             }
         }else{
+            $this->_view->titulo = "Inicio de Sesi&oacute;n";
         	$this->_view->renderizar('indexLogin', 'inicio');
         }
          //$this->_view->renderizar('index', 'inicio');

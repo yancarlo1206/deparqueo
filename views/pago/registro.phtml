@@ -5,7 +5,7 @@
         <h6 class="m-0 font-weight-bold text-primary">Registro de Ticket</h6>
     </div>
     <div class="card-body">
-      <form>
+      <form class="formTicket">
         <div class="input-group mb-3">
           <input type="text" class="form-control form-control-lg" placeholder="Ingresar Ticket" id="inputTicket">
           <div class="input-group-append">
@@ -40,19 +40,19 @@
         <div class="form-row">
           <div class="form-group col-md-3">
             <label>Fecha</label>
-            <input name="fecha" type="text" class="form-control">
+            <input name="fecha" type="text" class="form-control" readonly>
           </div>
           <div class="form-group col-md-3">
             <label>Hora Inicio</label>
-            <input name="horaIni" type="text" class="form-control">
+            <input name="horaIni" type="text" class="form-control" readonly>
           </div>
           <div class="form-group col-md-3">
             <label>Hora Fin</label>
-            <input name="horaFin" type="text" class="form-control">
+            <input name="horaFin" type="text" class="form-control" readonly>
           </div>
           <div class="form-group col-md-3">
             <label>Tiempo Total</label>
-            <input name="tiempoTotal" type="text" class="form-control">
+            <input name="tiempoTotal" type="text" class="form-control" readonly>
           </div>
         </div>
 
@@ -64,7 +64,7 @@
               type="text" 
               class="form-control text-left" 
               data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true,
-               'digits': 0, 'digitsOptional': false, 'prefix': '$ ', 'placeholder': '0'">
+               'digits': 0, 'digitsOptional': false, 'prefix': '$ ', 'placeholder': '0'" readonly>
             <input type="hidden" name="totalPagarNumero" value="">
           </div>
           <div class="form-group col-md-3">
@@ -74,7 +74,7 @@
               type="text" 
               class="form-control text-left" 
               data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true,
-              'digits': 0, 'digitsOptional': false, 'prefix': '$ ', 'placeholder': '0'">
+              'digits': 0, 'digitsOptional': false, 'prefix': '$ ', 'placeholder': '0'" disabled required>
               <input type="hidden" name="recibidoNumero" value="">
           </div>
           <div class="form-group col-md-3">
@@ -84,7 +84,7 @@
               type="text" 
               class="form-control text-left" 
               data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 
-              'digits': 0, 'digitsOptional': false, 'prefix': '$ ', 'placeholder': '0'">
+              'digits': 0, 'digitsOptional': false, 'prefix': '$ ', 'placeholder': '0'" readonly>
               <input type="hidden" name="devolverNumero" value="">
           </div>
         </div>

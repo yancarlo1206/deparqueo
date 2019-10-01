@@ -50,7 +50,7 @@ class ticketController extends Controller {
 			$this->redireccionar('ticket/');
     	}
         $this->_view->ticket = $this->_ingreso->get($ticket);
-    	$this->_view->titulo = 'Pago Parqueadero';
+    	$this->_view->titulo = 'Pase Cortesia';
         $this->_view->renderizar('registro', 'ticket');	
     }
 
@@ -75,7 +75,7 @@ class ticketController extends Controller {
             $this->redireccionar('ticket/');
         }
         $this->_view->ticket = $this->_ingreso->get($ticket);
-        $this->_view->titulo = 'Pago Parqueadero';
+        $this->_view->titulo = 'Anulaci&oacute;n Ticket';
         $this->_view->renderizar('cancelacion', 'ticket');   
     }
 

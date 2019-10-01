@@ -36,8 +36,8 @@ class pagoController extends Controller {
     	$this->_view->pagos = $this->_pago->dql(
             "SELECT p FROM Entities\Pago p WHERE p.fecha >=:fechaIni AND p.fecha <=:fechaFin",
            array('fechaIni' => $fechaIni, 'fechaFin' => $fechaFin)
-       );
-    	$this->_view->titulo = 'Ingreso Parqueadero';
+        );
+    	$this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' :: Listado';
         $this->_view->renderizar('index', 'pagos');
     }
 
@@ -45,13 +45,13 @@ class pagoController extends Controller {
     	if($this->getInt('guardar') == 1){
     		$this->_pago->getInstance()->setFecha(new \DateTime());
             $totalPagar = $this->getPostParam('totalPagarNumero');
-            $iva = $totalPagar * 0.16;
+            $iva = $totalPagar * 0.19;
             $valor = $totalPagar - $iva;
     		$this->_pago->getInstance()->setValor($valor);
             $this->_pago->getInstance()->setIva($iva);
             $this->_pago->getInstance()->setEntrego($this->getPostParam('recibidoNumero'));
             $this->_pago->getInstance()->setCambio($this->getPostParam('devolverNumero'));
-    		$this->_pago->getInstance()->setIngreso($this->getInt('ingreso'));
+    		$this->_pago->getInstance()->setIngreso($this->_ingreso->get($this->getInt('ingreso')));
     		$this->_pago->getInstance()->setUsuario($this->_usuario->get(Session::get('codigo')));
     		$this->_pago->getInstance()->setCaja($this->_caja->get(1));
     		try {
@@ -65,8 +65,8 @@ class pagoController extends Controller {
     		}
 			$this->redireccionar('pago/registrar/');
     	}
-    	$this->_view->titulo = 'Pago Parqueadero';
-        $this->_view->renderizar('registro', 'pago');	
+    	$this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' :: Registrar';
+        $this->_view->renderizar('registro', 'pagos');	
     }
 
     public function cargarPago(){
@@ -152,15 +152,32 @@ class pagoController extends Controller {
     }
 
     public function mensual() {
-        $this->_view->pagos = $this->_pagoMensual->resultList();
-        $this->_view->titulo = 'Pago Mensual';
+        $fecha = new \DateTime();
+        $this->_view->fecha = $fecha->format('d/m/Y');
+        $fecha = $fecha->format('Y-m-d');
+        if($this->getPostParam('fecha')){
+            $fecha = new \DateTime($this->getFecha($this->getTexto('fecha')));
+            $this->_view->fecha = $fecha->format('d/m/Y');
+        }
+        $this->_view->pagos = $this->_pago->dql(
+            "SELECT p FROM Entities\Pagomensual p WHERE p.fecha =:fecha",
+           array('fecha' => $fecha)
+        );
+        //$this->_view->pagos = $this->_pagoMensual->resultList();
+        $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' Mensual :: Listado';
         $this->_view->renderizar('mensual', 'pagosmensual');
     }
 
     public function registrarmensual(){
         if($this->getInt('guardar') == 1){
             $this->_pago->getInstance()->setFecha(new \DateTime());
-            $this->_pago->getInstance()->setValor($this->getPostParam('totalPagarNumero'));
+            $totalPagar = $this->getPostParam('totalPagarNumero');
+            $iva = $totalPagar * 0.16;
+            $valor = $totalPagar - $iva;
+            $this->_pago->getInstance()->setValor($valor);
+            $this->_pago->getInstance()->setIva($iva);
+            $this->_pago->getInstance()->setEntrego($this->getPostParam('recibidoNumero'));
+            $this->_pago->getInstance()->setCambio($this->getPostParam('devolverNumero'));
             $this->_pago->getInstance()->setUsuario($this->_usuario->get(Session::get('codigo')));
             $this->_pago->getInstance()->setCaja($this->_caja->get(1));
             try {
@@ -177,24 +194,47 @@ class pagoController extends Controller {
             }
             $this->redireccionar('pago/registrarmensual/');
         }
-        $this->_view->titulo = 'Pago Mensual Parqueadero';
-        $this->_view->renderizar('registromensual', 'pago');   
+        $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' Mensual :: Registrar';
+        $this->_view->renderizar('registromensual', 'pagosmensual');   
     }
 
     public function cargarPagoMensual(){
         $tarjeta = $this->getPostParam('tarjeta');
         $array = array();
         $tarjeta = $this->_tarjeta->findByObject(array('rfid' => $tarjeta));
+        if(!$tarjeta){
+            $array['data'] = "error";   
+            $array['mensaje'] = "La Tarjeta no Existe";
+            echo json_encode($array);
+            exit;
+        }
+        $tipoCliente = $tarjeta->getCliente()->getTipoCliente()->getId();
+        if($tipoCliente == 1){
+            $tipoTarifa = 3;
+        }else{
+            $tipoTarifa = 5;
+        }
         $tarifa = $this->_tarifa->dql("SELECT t FROM Entities\Tarifa t 
             WHERE t.fechainicio <=:fecha AND t.fechafin >=:fecha 
-            AND t.tipovehiculo =:tipoVehiculo AND t.tipotarifa = 3",
-            array('fecha' => new \DateTime(), 'tipoVehiculo' => $tarjeta->getTipoVehiculo()->getId()));
+            AND t.tipovehiculo =:tipoVehiculo AND t.tipotarifa =:tipoTarifa",
+            array(
+                'fecha' => new \DateTime(), 
+                'tipoVehiculo' => $tarjeta->getTipoVehiculo()->getId(),
+                'tipoTarifa' => $tipoTarifa));
         $totalPagar = $tarifa[0]->getValor();
         $array['data'] = "ok";
         $array['tarjeta'] = $tarjeta->getRfid();
         $array['cliente'] = $tarjeta->getCliente()->getNombre();
         $array['totalPagar'] = $totalPagar;
         echo json_encode($array);
+    }
+
+    public function generarFactura($pago=null){
+        echo "Hi";
+//include_once ("libs" . DS . "download" . DS . "download.php");
+//        $this->getLibrary('download/download');
+
+        exit;
     }
 
 }

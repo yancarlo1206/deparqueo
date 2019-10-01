@@ -41,8 +41,29 @@ class ingresoController extends Controller {
     public function registrarTarjeta(){
         $tarjeta = $this->_tarjeta->findByObject(array('rfid' => $this->getPostParam('tarjeta')));
         if(!$tarjeta){
-            Session::set('error','La Tarjeta RDIF no Existe');
+            Session::set('error','La Tarjeta RFID no Existe');
             $this->redireccionar('ingreso');
+        }
+        $tarjetasActivas = $this->_ingreso->dql("SELECT i FROM Entities\Ingreso i 
+            INNER JOIN Entities\IngresoTarjeta it WITH it.id = i.id
+            WHERE it.tarjeta =:tarjeta AND i.fechasalida IS NULL",
+            array('tarjeta' => $this->getPostParam('tarjeta')));
+        if(count($tarjetasActivas)){
+           Session::set('error','La Tarjeta RFID tiene una Entrada Activo');
+            $this->redireccionar('ingreso');
+            exit;
+        }
+        $cliente = $tarjeta->getCliente()->getId();
+        $tarjetasActivas = $this->_ingreso->dql("SELECT i FROM Entities\Ingreso i 
+            INNER JOIN Entities\IngresoTarjeta it WITH it.id = i.id
+            INNER JOIN Entities\Tarjeta t WITH t.rfid = it.tarjeta
+            INNER JOIN Entities\Cliente c WITH c.id = t.cliente
+            WHERE c.id =:cliente AND i.fechasalida IS NULL",
+            array('cliente' => $cliente));
+        if(count($tarjetasActivas)){
+           Session::set('error','La Tarjeta RFID pertenece a un Cliente que ya tiene una RFID Abierta');
+            $this->redireccionar('ingreso');
+            exit;
         }
         $fechaIngreso = new \DateTime();
         $this->_ingreso->getInstance()->setTipo($this->_tipoVehiculo->get($tarjeta->getTipoVehiculo()->getId()));

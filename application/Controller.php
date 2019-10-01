@@ -28,6 +28,7 @@ abstract class Controller {
 
   protected function getLibrary($libreria) {
     $rutaLibreria = LIBS_PATH. $libreria . '.php';
+    echo $rutaLibreria;
     if(is_readable($rutaLibreria)){
       require_once $rutaLibreria;
     }

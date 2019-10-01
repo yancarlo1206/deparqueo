@@ -10,7 +10,13 @@
         <div class="form-row">
           <div class="form-group col-md-12">
             <label>Descripci&oacute;n</label>
-            <input name="descripcion" type="text" class="form-control" value="<?php if(isset($this->dato)){ echo $this->dato->getDescripcion(); } ?>" required>
+            <input 
+              name="descripcion" 
+              type="text" 
+              class="form-control"
+              value="<?php if(isset($this->dato)){ echo $this->dato->getDescripcion(); } ?>" 
+              required
+              maxlength="50" >
           </div>
         </div>
 

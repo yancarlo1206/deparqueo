@@ -16,6 +16,21 @@
             </div>
           </div>
           <div class="card-body">
+            <form method="post">
+              <div class="input-group mb-3">
+                <input name="fecha" type="text" class="form-control datepicker" 
+                  autocomplete="off" 
+                  value="<?php echo $this->fecha; ?>" readonly >
+                <div class="input-group-append">
+                  <button class="btn btn-primary" type="submit">
+                    <span class="icon text-white-50">
+                      <i class="fas fa-arrow-right"></i>
+                    </span>
+                    | Buscar
+                  </button>
+                </div>
+              </div>
+            </form>
             <div class="table-responsive">
               <table class="table table-bordered" id="dataTableEsp" width="100%" cellspacing="0">
                 <thead>

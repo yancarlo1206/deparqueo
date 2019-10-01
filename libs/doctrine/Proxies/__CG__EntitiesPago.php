@@ -64,10 +64,10 @@ class Pago extends \Entities\Pago implements \Doctrine\ORM\Proxy\Proxy
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return array('__isInitialized__', 'id', 'fecha', 'valor', 'ingreso', 'caja', 'usuario');
+            return array('__isInitialized__', 'id', 'fecha', 'valor', 'ingreso', 'entrego', 'cambio', 'iva', 'caja', 'usuario');
         }
 
-        return array('__isInitialized__', 'id', 'fecha', 'valor', 'ingreso', 'caja', 'usuario');
+        return array('__isInitialized__', 'id', 'fecha', 'valor', 'ingreso', 'entrego', 'cambio', 'iva', 'caja', 'usuario');
     }
 
     /**
@@ -263,6 +263,72 @@ class Pago extends \Entities\Pago implements \Doctrine\ORM\Proxy\Proxy
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getIngreso', array());
 
         return parent::getIngreso();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setEntrego($entrego)
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setEntrego', array($entrego));
+
+        return parent::setEntrego($entrego);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getEntrego()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getEntrego', array());
+
+        return parent::getEntrego();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setCambio($cambio)
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setCambio', array($cambio));
+
+        return parent::setCambio($cambio);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getCambio()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getCambio', array());
+
+        return parent::getCambio();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setIva($iva)
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setIva', array($iva));
+
+        return parent::setIva($iva);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getIva()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getIva', array());
+
+        return parent::getIva();
     }
 
     /**

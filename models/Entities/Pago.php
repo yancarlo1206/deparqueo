@@ -40,9 +40,10 @@ function __construct() {}
     private $valor;
 
     /**
-     * @var integer
-     *
-     * @Column(name="ingreso", type="integer", nullable=true)
+     * @ManyToOne(targetEntity="Ingreso")
+     * @JoinColumns({
+     *   @JoinColumn(name="ingreso", referencedColumnName="id")
+     * })
      */
     private $ingreso;
 

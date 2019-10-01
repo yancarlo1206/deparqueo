@@ -10,33 +10,70 @@
         <div class="form-row">
           <div class="form-group col-md-6">
             <label>Documento</label>
-            <input name="documento" type="text" class="form-control" value="<?php if(isset($this->dato)){ echo $this->dato->getDocumento(); } ?>" required>
+            <input 
+              name="documento" 
+              type="text" 
+              class="form-control" 
+              value="<?php if(isset($this->dato)){ echo $this->dato->getDocumento(); } ?>" 
+              required
+              maxlength="10" >
           </div>
           <div class="form-group col-md-6">
             <label>Nombre</label>
-            <input name="nombre" type="text" class="form-control" value="<?php if(isset($this->dato)){ echo $this->dato->getNombre(); } ?>" required>
+            <input 
+              name="nombre" 
+              type="text" 
+              class="form-control" 
+              value="<?php if(isset($this->dato)){ echo $this->dato->getNombre(); } ?>" 
+              required
+              maxlength="50" >
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group col-md-6">
             <label>Fecha Nacimiento</label>
-            <input name="fechaNacimiento" type="text" class="form-control datepicker" value="<?php if(isset($this->dato)){ echo $this->dato->getFechaNacimiento()->format('d/m/Y'); } ?>" required>
+            <input 
+              name="fechaNacimiento" 
+              type="text" 
+              class="form-control datepicker" 
+              autocomplete="off"
+              value="<?php if(isset($this->dato)){ echo $this->dato->getFechaNacimiento()->format('d/m/Y'); } ?>" 
+              required
+              readonly >
           </div>
           <div class="form-group col-md-6">
             <label>Direccion</label>
-            <input name="direccion" type="text" class="form-control" value="<?php if(isset($this->dato)){ echo $this->dato->getDireccion(); } ?>" required>
+            <input 
+              name="direccion" 
+              type="text" 
+              class="form-control" 
+              value="<?php if(isset($this->dato)){ echo $this->dato->getDireccion(); } ?>" 
+              required
+              maxlength="50" >
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group col-md-6">
             <label>Telefono</label>
-            <input name="telefono" type="text" class="form-control" value="<?php if(isset($this->dato)){ echo $this->dato->getTelefono(); } ?>" required>
+            <input 
+              name="telefono" 
+              type="text" 
+              class="form-control" 
+              value="<?php if(isset($this->dato)){ echo $this->dato->getTelefono(); } ?>" 
+              required
+              maxlength="10" >
           </div>
           <div class="form-group col-md-6">
             <label>Correo</label>
-            <input name="correo" type="text" class="form-control" value="<?php if(isset($this->dato)){ echo $this->dato->getEmail(); } ?>" required>
+            <input 
+              name="correo" 
+              type="email" 
+              class="form-control" 
+              value="<?php if(isset($this->dato)){ echo $this->dato->getEmail(); } ?>" 
+              required
+              maxlength="40" >
           </div>
         </div>
 

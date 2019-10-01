@@ -22,7 +22,7 @@ class usuarioController extends Controller {
             $this->_model = $this->loadModel($this->_presentRequest->getControlador());
             $this->obj();
         }
-        $this->_view->renderizar('obj', ucwords(strtolower($this->_presentRequest->getControlador())));
+        $this->_view->renderizar('obj', strtolower($this->_presentRequest->getControlador()));
     }
 
     public function actualizar($id=0) {
@@ -44,7 +44,7 @@ class usuarioController extends Controller {
         if($_POST){
             $this->obj(false);
         }
-        $this->_view->renderizar('obj', ucwords(strtolower($this->_presentRequest->getControlador())));
+        $this->_view->renderizar('obj', strtolower($this->_presentRequest->getControlador()));
     }
 
     private function obj($new = true) {
