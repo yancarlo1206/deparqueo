@@ -68,7 +68,7 @@
       for ($i = 0; $i < count($_layoutParams['js']); $i++) {
         $x = substr($_layoutParams['js'][$i], -3);
         if ($x[0] == ".") { ?>
-          <script src="<?php echo $_layoutParams['js'][$i] ?>" type="text/javascript"></script>
+          <script src="<?php echo $_layoutParams['js'][$i] ?>?v=<?php echo(rand()); ?>" type="text/javascript"></script>
         <?php } else { ?>
           <link rel="stylesheet" href="<?php echo $_layoutParams['js'][$i] ?>" type="text/css" />
         <?php }

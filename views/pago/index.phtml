@@ -56,8 +56,12 @@
                     <td><?php echo $value->getFecha()->format('d/m/Y h:i:s a'); ?></td>
                     <td><?php echo $value->getIngreso()->getNumero(); ?></td>
                     <td><?php echo $value->getValor()+$value->getIva(); ?></td>
-                    <td>
-                      <a title="Factura" href="<?php echo BASE_URL.$this->_presentRequest->getControlador().'/'; ?>generarFactura/<?php echo $value->getId(); ?>/"><i class="fas fa-edit"></i></a>
+                    <td style="text-align: center">
+                      <a 
+                        title="Descargar Factura" 
+                        href="<?php echo BASE_URL.$this->_presentRequest->getControlador().'/'; ?>generarFactura/<?php echo $value->getIngreso()->getNumero(); ?>/">
+                        <i class="fas fa-print"></i>
+                      </a>
                     </td>
                   </tr>
                   <?php } ?>

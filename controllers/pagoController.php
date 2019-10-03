@@ -229,12 +229,45 @@ class pagoController extends Controller {
         echo json_encode($array);
     }
 
-    public function generarFactura($pago=null){
-        echo "Hi";
-//include_once ("libs" . DS . "download" . DS . "download.php");
-//        $this->getLibrary('download/download');
+    public function generarFactura($ticket=null){
+        $ingreso = $this->_ingreso->findByObject(array('numero' => $ticket));
+        $pago = $this->_pago->findByObject(array('ingreso' => $ingreso->getId()));
+        $data = array(
+        "ticket" => $ticket,
+        "fecha" => $ingreso->getFecha()->format('d/m/Y'),
+        "facturaventa" => "29/09/2019 17:00:00",
+        "fechaingreso" => $ingreso->getFechaIngreso()->format('d/m/Y h:i:s'),
+        "fechasalida" => "29/09/2019 17:00:00",
+        "iva" => $pago->getIva(),
+        "valortotal" => "".($pago->getValor() + $pago->getIva()),
+        "entrego" => $pago->getEntrego(),
+        "cambio" => $pago->getCambio(),
+        "subtotal" => $pago->getValor());
+        $ch = curl_init("http://190.145.239.11:8086/pdf/0/factura_210");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS,json_encode($data));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','X-Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb2RpZ28iOiIwMDIwMyIsInRpcG8iOiJkb2NlbnRlIn0.oOf_khS-4ZBzyGomdKd2_QswKCS-w2aJNir4CGV5-iM'));
+        $response = curl_exec($ch);
+        curl_close($ch);
+        header("Location:http://190.145.239.11:8085/files/informes/".$response);
+    }
 
-        exit;
+    public function reporteDiario(){
+        $data = array(
+        "fecha" => "2019-10-02");
+        //$data = "{'FECHA':'2019-10-02'}";
+        $ch = curl_init("http://190.145.239.11:8086/pdf/1/reporteInformacionDiaria");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS,json_encode($data));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','X-Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb2RpZ28iOiIwMDIwMyIsInRpcG8iOiJkb2NlbnRlIn0.oOf_khS-4ZBzyGomdKd2_QswKCS-w2aJNir4CGV5-iM'));
+        $response = curl_exec($ch);
+        var_dump(curl_error($ch));
+        var_dump(curl_errno($ch));
+        curl_close($ch);
+        var_dump($response);
+        //header("Location:http://190.145.239.11:8085/files/informes/".$response);
     }
 
 }
