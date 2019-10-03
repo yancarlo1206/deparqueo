@@ -42,6 +42,13 @@ function __construct() {}
     /**
      * @var string
      *
+     * @Column(name="rfid", type="string", length=50, nullable=true)
+     */
+    private $rfid;
+
+    /**
+     * @var string
+     *
      * @Column(name="email", type="string", length=50, nullable=true)
      */
     private $email;
@@ -145,6 +152,29 @@ function __construct() {}
     public function getClave()
     {
         return $this->clave;
+    }
+
+    /** 
+     * Set rfid
+     *
+     * @param string $rfid
+     * @return Usuario
+     */
+    public function setRfid($rfid)
+    {
+        $this->rfid = $rfid;
+    
+        return $this;
+    }
+
+    /**
+     * Get rfid
+     *
+     * @return string 
+     */
+    public function getRfid()
+    {
+        return $this->rfid;
     }
 
     /** 

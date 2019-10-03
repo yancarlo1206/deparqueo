@@ -255,7 +255,7 @@ class pagoController extends Controller {
 
     public function reporteDiario(){
         $data = array(
-        "fecha" => "2019-10-02");
+        "fecha" => "2019-10-01");
         //$data = "{'FECHA':'2019-10-02'}";
         $ch = curl_init("http://190.145.239.11:8086/pdf/1/reporteInformacionDiaria");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -266,8 +266,8 @@ class pagoController extends Controller {
         var_dump(curl_error($ch));
         var_dump(curl_errno($ch));
         curl_close($ch);
-        var_dump($response);
-        //header("Location:http://190.145.239.11:8085/files/informes/".$response);
+        //var_dump($response);
+        header("Location:http://190.145.239.11:8085/files/informes/".$response);
     }
 
 }

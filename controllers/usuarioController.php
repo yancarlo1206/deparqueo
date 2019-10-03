@@ -60,6 +60,7 @@ class usuarioController extends Controller {
         $this->_model->getInstance()->setFechaNacimiento(new \DateTime($this->getFecha($this->getTexto('fechaNacimiento'))));
         $this->_model->getInstance()->setUsuario($this->getTexto('usuario'));
         $this->_model->getInstance()->setClave(Hash::getHash('sha1', '1234', HASH_KEY));
+        $this->_model->getInstance()->setRfid($this->getTexto('rfid'));
         $this->_model->getInstance()->setEmail($this->getTexto('correo'));
         $this->_model->getInstance()->setRol($this->_rol->get($this->getInt('rol')));
         if($new){

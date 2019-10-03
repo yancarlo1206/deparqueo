@@ -79,6 +79,21 @@ class ticketController extends Controller {
         $this->_view->renderizar('cancelacion', 'ticket');   
     }
 
+    public function imprimir($ticket=null){
+        $ingreso = $this->_ingreso->findByObject(array('numero' => $ticket));
+        $data = array(
+        "ticket" => $ticket,
+        "fecha" => $ingreso->getFecha()->format('d/m/Y'));
+        $ch = curl_init("http://190.145.239.11:8086/pdf/0/ticket_210");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS,json_encode($data));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','X-Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb2RpZ28iOiIwMDIwMyIsInRpcG8iOiJkb2NlbnRlIn0.oOf_khS-4ZBzyGomdKd2_QswKCS-w2aJNir4CGV5-iM'));
+        $response = curl_exec($ch);
+        curl_close($ch);
+        header("Location:http://190.145.239.11:8085/files/informes/".$response);
+    }
+
 
 }
 

@@ -69,6 +69,20 @@
                     ?>
                     </td>
                     <td class="text-center">
+                      <a 
+                        title="Imprimir Ticket" 
+                        href="<?php echo BASE_URL.$this->_presentRequest->getControlador().'/'; ?>imprimir/<?php echo $value->getNumero(); ?>/">
+                          <i class="fas fa-fingerprint"></i>
+                      </a>
+
+                      <?php if(count($value->getIngresoNormal()[0]->getPagos())){ ?>
+                        <a 
+                          title="Descargar Factura" 
+                          href="<?php echo BASE_URL.'pago/'; ?>generarFactura/<?php echo $value->getNumero(); ?>/">
+                          <i class="fas fa-print"></i>
+                        </a>
+                      <?php } ?>  
+
                       <?php if(!$temp){ ?>
                       <a 
                         title="Pase Cortesia" 

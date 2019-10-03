@@ -55,6 +55,19 @@
         </div>
 
         <div class="form-row">
+          <div class="form-group col-md-12">
+            <label>Tarjeta RFID</label>
+            <input 
+              name="rfid" 
+              type="text" 
+              class="form-control" 
+              value="<?php if(isset($this->dato)){ echo $this->dato->getRfid(); } ?>" 
+              required 
+              maxlength="20">
+          </div>
+        </div>
+
+        <div class="form-row">
           <div class="form-group col-md-6">
             <label>Correo</label>
             <input 
