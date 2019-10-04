@@ -19,6 +19,8 @@ class pagoController extends Controller {
         $this->_usuario = $this->loadModel('usuario');
         $this->_caja = $this->loadModel('caja');
 
+        $this->_variable = $this->loadModel('variable');
+
         $this->_view->setJs(array('validar'));
     }
     
@@ -54,11 +56,17 @@ class pagoController extends Controller {
     		$this->_pago->getInstance()->setIngreso($this->_ingreso->get($this->getInt('ingreso')));
     		$this->_pago->getInstance()->setUsuario($this->_usuario->get(Session::get('codigo')));
     		$this->_pago->getInstance()->setCaja($this->_caja->get(1));
+            $this->_variable->get(1);
+            $consecutivo = $this->_variable->getInstance()->getValor();
+            $this->_pago->getInstance()->setFactura($consecutivo);
     		try {
     			$this->_pago->save();
 	    		$this->_pagoServicio->getInstance()->setId($this->_pago->getInstance());
 	    		$this->_pagoServicio->getInstance()->setIngreso($this->_ingresoNormal->get($this->getInt('ingreso')));
 	    		$this->_pagoServicio->save();
+                $consecutivo = $consecutivo++;
+                $this->_variable->getInstance()->setValor($consecutivo);
+                $this->_variable->update();
 				Session::set('mensaje','Registro de Pago Correcto');
     		} catch (Exception $e) {
     			Session::set('error','Error en el Proceso');

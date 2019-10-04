@@ -50,6 +50,13 @@ function __construct() {}
     /**
      * @var string
      *
+     * @Column(name="factura", type="decimal", precision=10, scale=0, nullable=true)
+     */
+    private $factura;
+
+    /**
+     * @var string
+     *
      * @Column(name="entrego", type="decimal", precision=8, scale=0, nullable=true)
      */
     private $entrego;
@@ -179,6 +186,29 @@ function __construct() {}
     public function getIngreso()
     {
         return $this->ingreso;
+    }
+
+    /** 
+     * Set factura
+     *
+     * @param integer $factura
+     * @return Pago
+     */
+    public function setFactura($factura)
+    {
+        $this->factura = $factura;
+    
+        return $this;
+    }
+
+    /**
+     * Get factura
+     *
+     * @return integer 
+     */
+    public function getFactura()
+    {
+        return $this->factura;
     }
 
     /** 
