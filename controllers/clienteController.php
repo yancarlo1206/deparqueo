@@ -3,6 +3,7 @@
 class clienteController extends Controller {   
     public function __construct() {
         parent::__construct();
+        Session::accesoEstricto(array('AUXILIAR'));
         $this->_tipoCliente = $this->loadModel("tipocliente");
         $this->_usuario = $this->loadModel("usuario");
     }

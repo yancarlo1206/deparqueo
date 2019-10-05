@@ -1,6 +1,6 @@
 <?php
 
-class rolController extends Controller {   
+class tiposancionController extends Controller {   
     public function __construct() {
         parent::__construct();
         Session::accesoEstricto(array('ADMINISTRADOR'));
@@ -46,13 +46,14 @@ class rolController extends Controller {
     }
 
     private function obj($new = true) {
-        $arrayTexto = array('descripcion');
+        $arrayTexto = array('descripcion','valor');
         $rta = $this->validarArrays($arrayTexto);
         if($rta){
             Session::set('error','Falto digitar o seleccionar <b>'.$rta.'</b>');
             $this->redireccionar($this->_presentRequest->getUrl());
         }
         $this->_model->getInstance()->setDescripcion($this->getTexto('descripcion'));
+        $this->_model->getInstance()->setValor($this->getTexto('valor'));
         if($new){
             $this->_model->save(); 
             Session::set('mensaje','Registro Creado con Exito.');

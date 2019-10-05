@@ -3,6 +3,7 @@
 class tarjetaController extends Controller {   
     public function __construct() {
         parent::__construct();
+        Session::accesoEstricto(array('AUXILIAR'));
         $this->_cliente = $this->loadModel("cliente");
         $this->_tipoVehiculo = $this->loadModel("tipovehiculo");
         $this->_usuario = $this->loadModel("usuario");

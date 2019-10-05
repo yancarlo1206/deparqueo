@@ -3,6 +3,7 @@
 class pagoController extends Controller {   
     public function __construct() {
         parent::__construct();
+        Session::accesoEstricto(array('CAJERO'));
         $this->_ingreso = $this->loadModel('ingreso');
         $this->_ingresoNormal = $this->loadModel('ingresonormal');
 
@@ -15,6 +16,9 @@ class pagoController extends Controller {
 
         $this->_tarifa = $this->loadModel('tarifa');
         $this->_tipoTarifa = $this->loadModel('tipotarifa');
+
+        $this->_pagoSancion = $this->loadModel('pagosancion');
+        $this->_tipoSancion = $this->loadModel('tiposancion');
 
         $this->_usuario = $this->loadModel('usuario');
         $this->_caja = $this->loadModel('caja');
@@ -36,7 +40,7 @@ class pagoController extends Controller {
             $fechaFin = $fecha->format('Y-m-d')." 23:59:59";
         }
     	$this->_view->pagos = $this->_pago->dql(
-            "SELECT p FROM Entities\Pago p WHERE p.fecha >=:fechaIni AND p.fecha <=:fechaFin",
+            "SELECT p FROM Entities\Pago p WHERE p.fecha >=:fechaIni AND p.fecha <=:fechaFin AND p.ingreso is not null",
            array('fechaIni' => $fechaIni, 'fechaFin' => $fechaFin)
         );
     	$this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' :: Listado';
@@ -171,7 +175,6 @@ class pagoController extends Controller {
             "SELECT p FROM Entities\Pagomensual p WHERE p.fecha =:fecha",
            array('fecha' => $fecha)
         );
-        //$this->_view->pagos = $this->_pagoMensual->resultList();
         $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' Mensual :: Listado';
         $this->_view->renderizar('mensual', 'pagosmensual');
     }
@@ -180,7 +183,7 @@ class pagoController extends Controller {
         if($this->getInt('guardar') == 1){
             $this->_pago->getInstance()->setFecha(new \DateTime());
             $totalPagar = $this->getPostParam('totalPagarNumero');
-            $iva = $totalPagar * 0.16;
+            $iva = $totalPagar * 0.19;
             $valor = $totalPagar - $iva;
             $this->_pago->getInstance()->setValor($valor);
             $this->_pago->getInstance()->setIva($iva);
@@ -197,7 +200,7 @@ class pagoController extends Controller {
                 $this->_variable->getInstance()->setValor($consecutivo);
                 $this->_variable->update();
                 $this->_pagoMensual->getInstance()->setId($this->_pago->getInstance());
-                $this->_pagoMensual->getInstance()->setTarjeta($this->_tarjeta->get($this->getInt('tarjeta')));
+                $this->_pagoMensual->getInstance()->setTarjeta($this->_tarjeta->get($this->getPostParam('tarjeta')));
                 $this->_pagoMensual->getInstance()->setValor($this->getPostParam('totalPagarNumero'));
                 $this->_pagoMensual->getInstance()->setFecha(new \DateTime());
                 $this->_pagoMensual->getInstance()->setFechaRegistro(new \DateTime());
@@ -207,12 +210,8 @@ class pagoController extends Controller {
                 $newDate = date("d-m-Y",strtotime($fechaTarjeta."+ 1 month"));
                 $this->_tarjeta->getInstance()->setFechaFin(new \DateTime($newDate));
                 $this->_tarjeta->update();
-                exit;
-                exit;
                 Session::set('mensaje','Registro de Pago Mensual Correcto');
             } catch (Exception $e) {
-                echo $e;
-                exit;
                 Session::set('error','Error en el Proceso');
             }
             $this->redireccionar('pago/registrarmensual/');
@@ -249,6 +248,76 @@ class pagoController extends Controller {
         $array['tarjeta'] = $tarjeta->getRfid();
         $array['cliente'] = $tarjeta->getCliente()->getNombre();
         $array['totalPagar'] = $totalPagar;
+        echo json_encode($array);
+    }
+
+    public function sancion() {
+        $fecha = new \DateTime();
+        $this->_view->fecha = $fecha->format('d/m/Y');
+        //$fecha = $fecha->format('Y-m-d');
+        $fechaIni = $fecha->format('Y-m-d')." 00:00:00";
+        $fechaFin = $fecha->format('Y-m-d')." 23:59:59";
+        if($this->getPostParam('fecha')){
+            $fecha = new \DateTime($this->getFecha($this->getTexto('fecha')));
+            $this->_view->fecha = $fecha->format('d/m/Y');
+            $fechaIni = $fecha->format('Y-m-d')." 00:00:00";
+            $fechaFin = $fecha->format('Y-m-d')." 23:59:59";
+        }
+        $this->_view->pagos = $this->_pago->dql(
+            "SELECT p FROM Entities\Pagosancion p WHERE p.fecha >=:fechaIni AND p.fecha <=:fechaFin",
+           array('fechaIni' => $fechaIni, 'fechaFin' => $fechaFin)
+        );
+        $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' Sancion :: Listado';
+        $this->_view->renderizar('sancion', 'pagossancion');
+    }
+
+    public function registrarsancion(){
+        if($this->getInt('guardar') == 1){
+            $this->_pago->getInstance()->setFecha(new \DateTime());
+            $documento = $this->getTexto('documento');
+            $totalPagar = $this->_tipoSancion->get($this->getTexto('tipoSancion'))->getValor();
+            $iva = $totalPagar * 0.19;
+            $valor = $totalPagar - $iva;
+            $this->_pago->getInstance()->setValor($valor);
+            $this->_pago->getInstance()->setIva($iva);
+            $this->_pago->getInstance()->setEntrego($this->getPostParam('recibidoNumero'));
+            $this->_pago->getInstance()->setCambio($this->getPostParam('devolverNumero'));
+            $this->_pago->getInstance()->setUsuario($this->_usuario->get(Session::get('codigo')));
+            $this->_pago->getInstance()->setCaja($this->_caja->get(1));
+            $this->_variable->get(1);
+            $consecutivo = $this->_variable->getInstance()->getValor();
+            $this->_pago->getInstance()->setFactura($consecutivo);
+            try {
+                $this->_pago->save();
+                $consecutivo = $consecutivo+1;
+                $this->_variable->getInstance()->setValor($consecutivo);
+                $this->_variable->update();
+                $this->_pagoSancion->getInstance()->setId($this->_pago->getInstance());
+                $this->_pagoSancion->getInstance()->setDocumento($documento);
+                $this->_pagoSancion->getInstance()->setFecha(new \DateTime());
+                $this->_pagoSancion->getInstance()->setTipoSancion($this->_tipoSancion->get($this->getTexto('tipoSancion')));
+                $this->_pagoSancion->save();
+                Session::set('mensaje','Registro de Pago Sanci&oacute;n Correcto');
+            } catch (Exception $e) {
+                Session::set('error','Error en el Proceso');
+            }
+            $this->redireccionar('pago/registrarsancion/');
+        }
+        $this->_view->tipoSanciones = $this->_tipoSancion->resultList();
+        $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' Sanci&oacute;n :: Registrar';
+        $this->_view->renderizar('registrosancion', 'pagossancion');   
+    }
+
+    public function cargarPagoSancion(){
+        $tipoSancion = $this->getPostParam('tipoSancion');
+        $array = array();
+        $array['data'] = "ok";
+        if($tipoSancion){
+            $tipoSancion = $this->_tipoSancion->get($tipoSancion);
+            $array['totalPagar'] = $tipoSancion->getValor();
+        }else{
+            $array['totalPagar'] = "";
+        }
         echo json_encode($array);
     }
 

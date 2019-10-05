@@ -3,6 +3,7 @@
 class ticketController extends Controller {   
     public function __construct() {
         parent::__construct();
+        Session::accesoEstricto(array('AUXILIAR'));
         $this->_ingreso = $this->loadModel('ingreso');
         $this->_ingresoNormal = $this->loadModel('ingresonormal');
         $this->_ingresoCancelado = $this->loadModel('ingresocancelado');

@@ -7,6 +7,7 @@ class usuarioController extends Controller {
     }
 
     public function index() {
+        Session::accesoEstricto(array('ADMINISTRADOR'));
         $this->_model = $this->loadModel($this->_presentRequest->getControlador());
         $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' :: Listado';
         $this->_view->controlador = ucwords($this->_presentRequest->getControlador());
@@ -15,6 +16,7 @@ class usuarioController extends Controller {
     }
     
     public function agregar() {
+        Session::accesoEstricto(array('ADMINISTRADOR'));
         $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' :: Agregar';
         $this->_view->controlador = ucwords($this->_presentRequest->getControlador());
         $this->_view->roles = $this->_rol->resultList();
@@ -26,6 +28,7 @@ class usuarioController extends Controller {
     }
 
     public function actualizar($id=0) {
+        Session::accesoEstricto(array('ADMINISTRADOR'));
         $this->_model = $this->loadModel($this->_presentRequest->getControlador());
         $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' :: Actualizar';
         $this->_view->miga = "Actualizar";
@@ -48,6 +51,7 @@ class usuarioController extends Controller {
     }
 
     private function obj($new = true) {
+        Session::accesoEstricto(array('ADMINISTRADOR'));
         $arrayTexto = array('documento', 'nombre', 'fechaNacimiento','correo');
         $arrayInt = array('rol');
         $rta = $this->validarArrays($arrayTexto, $arrayInt);
