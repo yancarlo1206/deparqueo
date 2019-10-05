@@ -64,7 +64,7 @@ class pagoController extends Controller {
 	    		$this->_pagoServicio->getInstance()->setId($this->_pago->getInstance());
 	    		$this->_pagoServicio->getInstance()->setIngreso($this->_ingresoNormal->get($this->getInt('ingreso')));
 	    		$this->_pagoServicio->save();
-                $consecutivo = $consecutivo++;
+                $consecutivo = $consecutivo+1;
                 $this->_variable->getInstance()->setValor($consecutivo);
                 $this->_variable->update();
 				Session::set('mensaje','Registro de Pago Correcto');
@@ -188,16 +188,31 @@ class pagoController extends Controller {
             $this->_pago->getInstance()->setCambio($this->getPostParam('devolverNumero'));
             $this->_pago->getInstance()->setUsuario($this->_usuario->get(Session::get('codigo')));
             $this->_pago->getInstance()->setCaja($this->_caja->get(1));
+            $this->_variable->get(1);
+            $consecutivo = $this->_variable->getInstance()->getValor();
+            $this->_pago->getInstance()->setFactura($consecutivo);
             try {
                 $this->_pago->save();
+                $consecutivo = $consecutivo+1;
+                $this->_variable->getInstance()->setValor($consecutivo);
+                $this->_variable->update();
                 $this->_pagoMensual->getInstance()->setId($this->_pago->getInstance());
                 $this->_pagoMensual->getInstance()->setTarjeta($this->_tarjeta->get($this->getInt('tarjeta')));
                 $this->_pagoMensual->getInstance()->setValor($this->getPostParam('totalPagarNumero'));
                 $this->_pagoMensual->getInstance()->setFecha(new \DateTime());
                 $this->_pagoMensual->getInstance()->setFechaRegistro(new \DateTime());
                 $this->_pagoMensual->save();
+                $fechaTarjeta = $this->_tarjeta->getInstance()->getFechaFin();
+                $fechaTarjeta = $fechaTarjeta->format('d-m-Y');
+                $newDate = date("d-m-Y",strtotime($fechaTarjeta."+ 1 month"));
+                $this->_tarjeta->getInstance()->setFechaFin(new \DateTime($newDate));
+                $this->_tarjeta->update();
+                exit;
+                exit;
                 Session::set('mensaje','Registro de Pago Mensual Correcto');
             } catch (Exception $e) {
+                echo $e;
+                exit;
                 Session::set('error','Error en el Proceso');
             }
             $this->redireccionar('pago/registrarmensual/');
@@ -243,7 +258,7 @@ class pagoController extends Controller {
         $data = array(
         "ticket" => $ticket,
         "fecha" => $ingreso->getFecha()->format('d/m/Y'),
-        "facturaventa" => "29/09/2019 17:00:00",
+        "facturaventa" => $pago->getFactura(),
         "fechaingreso" => $ingreso->getFechaIngreso()->format('d/m/Y h:i:s'),
         "fechasalida" => "29/09/2019 17:00:00",
         "iva" => $pago->getIva(),
@@ -263,8 +278,7 @@ class pagoController extends Controller {
 
     public function reporteDiario(){
         $data = array(
-        "fecha" => "2019-10-01");
-        //$data = "{'FECHA':'2019-10-02'}";
+        "FECHA" => "2019-10-01");
         $ch = curl_init("http://190.145.239.11:8086/pdf/1/reporteInformacionDiaria");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
@@ -274,7 +288,6 @@ class pagoController extends Controller {
         var_dump(curl_error($ch));
         var_dump(curl_errno($ch));
         curl_close($ch);
-        //var_dump($response);
         header("Location:http://190.145.239.11:8085/files/informes/".$response);
     }
 
