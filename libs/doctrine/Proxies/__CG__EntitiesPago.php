@@ -64,10 +64,10 @@ class Pago extends \Entities\Pago implements \Doctrine\ORM\Proxy\Proxy
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return array('__isInitialized__', 'id', 'fecha', 'valor', 'ingreso', 'entrego', 'cambio', 'iva', 'caja', 'usuario');
+            return array('__isInitialized__', 'id', 'fecha', 'valor', 'ingreso', 'factura', 'entrego', 'cambio', 'iva', 'caja', 'usuario');
         }
 
-        return array('__isInitialized__', 'id', 'fecha', 'valor', 'ingreso', 'entrego', 'cambio', 'iva', 'caja', 'usuario');
+        return array('__isInitialized__', 'id', 'fecha', 'valor', 'ingreso', 'factura', 'entrego', 'cambio', 'iva', 'caja', 'usuario');
     }
 
     /**
@@ -263,6 +263,28 @@ class Pago extends \Entities\Pago implements \Doctrine\ORM\Proxy\Proxy
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getIngreso', array());
 
         return parent::getIngreso();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setFactura($factura)
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setFactura', array($factura));
+
+        return parent::setFactura($factura);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getFactura()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getFactura', array());
+
+        return parent::getFactura();
     }
 
     /**
