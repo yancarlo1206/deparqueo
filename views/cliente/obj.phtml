@@ -33,15 +33,16 @@
         <div class="form-row">
           <div class="form-group col-md-6">
             <label>Fecha Nacimiento</label>
-            <input 
+	      <input 
               name="fechaNacimiento" 
               type="text" 
               class="form-control datepicker" 
+              data-date-format="dd/mm/yyyy"
               autocomplete="off"
-              value="<?php if(isset($this->dato)){ echo $this->dato->getFechaNacimiento()->format('d/m/Y'); } ?>" 
-              required
-              readonly >
-          </div>
+              value="<?php if(isset($this->dato) && $this->dato->getFechaNacimiento()){ echo $this->dato->getFechaNacimiento()->format('d/m/Y'); } ?>" 
+              required 
+              readonly>
+            </div>
           <div class="form-group col-md-6">
             <label>Direccion</label>
             <input 
@@ -49,7 +50,6 @@
               type="text" 
               class="form-control" 
               value="<?php if(isset($this->dato)){ echo $this->dato->getDireccion(); } ?>" 
-              required
               maxlength="50" >
           </div>
         </div>
@@ -72,7 +72,6 @@
               type="email" 
               class="form-control" 
               value="<?php if(isset($this->dato)){ echo $this->dato->getEmail(); } ?>" 
-              required
               maxlength="40" >
           </div>
         </div>
@@ -83,6 +82,18 @@
             <?php $tipoCliente = ""; ?>
             <?php if(isset($this->dato)){ $tipoCliente = $this->dato->getTipoCliente()->getId(); } ?>
             <?php echo $this->combobox("tipoCliente", "Seleccione...", $this->tipoClientes, $tipoCliente, "getId", "getDescripcion", "class='form-control show-tick' data-live-search='true' required","getDescripcion"); ?>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-12">
+            <label>Observaci&oacute;n / Placa</label>
+              <input 
+              name="observacion" 
+              type="text" 
+              class="form-control" 
+              value="<?php if(isset($this->dato)){ echo $this->dato->getObservacion(); } ?>" 
+              maxlength="500" >
           </div>
         </div>
 

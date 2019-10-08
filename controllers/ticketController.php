@@ -3,6 +3,7 @@
 class ticketController extends Controller {   
     public function __construct() {
         parent::__construct();
+        Session::accesoEstricto(array('AUXILIAR'));
         $this->_ingreso = $this->loadModel('ingreso');
         $this->_ingresoNormal = $this->loadModel('ingresonormal');
         $this->_ingresoCancelado = $this->loadModel('ingresocancelado');
@@ -84,14 +85,14 @@ class ticketController extends Controller {
         $data = array(
         "ticket" => $ticket,
         "fecha" => $ingreso->getFecha()->format('d/m/Y'));
-        $ch = curl_init("http://190.145.239.11:8086/pdf/0/ticket_210");
+        $ch = curl_init("http://192.168.0.150:8086/pdf/0/ticket_210");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($ch, CURLOPT_POSTFIELDS,json_encode($data));
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','X-Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb2RpZ28iOiIwMDIwMyIsInRpcG8iOiJkb2NlbnRlIn0.oOf_khS-4ZBzyGomdKd2_QswKCS-w2aJNir4CGV5-iM'));
         $response = curl_exec($ch);
         curl_close($ch);
-        header("Location:http://190.145.239.11:8085/files/informes/".$response);
+        header("Location:http://192.168.0.150:8085/files/informes/".$response);
     }
 
 

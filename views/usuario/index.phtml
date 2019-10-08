@@ -49,6 +49,7 @@
                     <td><?php echo $value->getRol()->getDescripcion(); ?></td>
                     <td class="text-center">
                       <a title="Actualizar" href="<?php echo BASE_URL.$this->_presentRequest->getControlador().'/'; ?>actualizar/<?php echo $value->getId(); ?>/"><i class="fas fa-edit"></i></a>
+                      <a title="Reiniciar Clave" href="<?php echo BASE_URL.$this->_presentRequest->getControlador().'/'; ?>reiniciar_clave/<?php echo $value->getId(); ?>/"><i class="fas fa-redo"></i></a>
                     </td>
                   </tr>
                   <?php } ?>

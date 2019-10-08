@@ -3,6 +3,7 @@
 class rolController extends Controller {   
     public function __construct() {
         parent::__construct();
+        Session::accesoEstricto(array('ADMINISTRADOR'));
     }
 
     public function index() {

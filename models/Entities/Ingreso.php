@@ -53,6 +53,13 @@ function __construct() {}
      */
     private $numero;
 
+     /**
+     * @var string
+     *
+     * @Column(name="dia", type="integer")
+     */
+    private $dia;
+
     /**
      * @var \Tipovehiculo
      *
@@ -181,6 +188,29 @@ function __construct() {}
     public function getNumero()
     {
         return $this->numero;
+    }
+
+     /** 
+     * Set dia
+     *
+     * @param string $dia
+     * @return Ingreso
+     */
+    public function setDia($dia)
+    {
+        $this->dia = $dia;
+    
+        return $this;
+    }
+
+    /**
+     * Get dia
+     *
+     * @return string 
+     */
+    public function getDia()
+    {
+        return $this->dia;
     }
 
     /** 

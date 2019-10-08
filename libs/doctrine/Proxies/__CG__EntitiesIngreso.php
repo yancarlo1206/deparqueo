@@ -64,10 +64,10 @@ class Ingreso extends \Entities\Ingreso implements \Doctrine\ORM\Proxy\Proxy
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return array('__isInitialized__', 'id', 'fecha', 'fechaingreso', 'fechasalida', 'numero', 'tipo', 'ingresoNormal');
+            return array('__isInitialized__', 'id', 'fecha', 'fechaingreso', 'fechasalida', 'numero', 'dia', 'tipo', 'ingresoNormal');
         }
 
-        return array('__isInitialized__', 'id', 'fecha', 'fechaingreso', 'fechasalida', 'numero', 'tipo', 'ingresoNormal');
+        return array('__isInitialized__', 'id', 'fecha', 'fechaingreso', 'fechasalida', 'numero', 'dia', 'tipo', 'ingresoNormal');
     }
 
     /**
@@ -285,6 +285,28 @@ class Ingreso extends \Entities\Ingreso implements \Doctrine\ORM\Proxy\Proxy
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getNumero', array());
 
         return parent::getNumero();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setDia($dia)
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setDia', array($dia));
+
+        return parent::setDia($dia);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getDia()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getDia', array());
+
+        return parent::getDia();
     }
 
     /**

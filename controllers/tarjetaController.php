@@ -3,6 +3,7 @@
 class tarjetaController extends Controller {   
     public function __construct() {
         parent::__construct();
+        Session::accesoEstricto(array('AUXILIAR'));
         $this->_cliente = $this->loadModel("cliente");
         $this->_tipoVehiculo = $this->loadModel("tipovehiculo");
         $this->_usuario = $this->loadModel("usuario");
@@ -19,7 +20,7 @@ class tarjetaController extends Controller {
     public function agregar() {
         $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' :: Agregar';
         $this->_view->controlador = ucwords($this->_presentRequest->getControlador());
-        $this->_view->clientes = $this->_cliente->resultList();
+	$this->_view->clientes = $this->_cliente->findBy(array(),array('nombre' => 'asc'));
         $this->_view->tipoVehiculos = $this->_tipoVehiculo->resultList();
         if($_POST){
             $this->_model = $this->loadModel($this->_presentRequest->getControlador());
@@ -33,13 +34,13 @@ class tarjetaController extends Controller {
         $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' :: Actualizar';
         $this->_view->miga = "Actualizar";
         $this->_view->controlador = ucwords($this->_presentRequest->getControlador());
-        $this->_view->clientes = $this->_cliente->resultList();
+	$this->_view->clientes = $this->_cliente->findBy(array(),array('nombre' => 'asc'));
         $this->_view->tipoVehiculos = $this->_tipoVehiculo->resultList();
-        if($this->filtrarInt($id)<1){
+        /*if($this->filtrarInt($id)<1){
             Session::set('error','Registro No Encontrado.');
             $this->redireccionar();
-        }
-        $this->_model->get($this->filtrarInt($id));
+        }*/
+        $this->_model->get($id);
         if(!$this->_model->getInstance()){
             Session::set('error','Registro No Encontrado.');
             $this->redireccionar();

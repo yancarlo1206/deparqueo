@@ -16,6 +16,13 @@ jQuery(document).ready(function($) {
 	$("#btnCalcular").click(function(event) {
 		event.preventDefault();
 		var ticket = $("#inputTicket").val();
+		var check = 0;
+		if($("#inputCheck").is(':checked') ) {
+    		check = 1;
+    		$('.pagoNormal').css('display', 'none');
+		}else{
+			$('.pagoNormal').css('display', 'block');
+		}
 		if(ticket == ''){
 			$(".mensajeError").html("Se Debe Registrar un Ticket");
 			$(".alert").css('display', 'block');
@@ -24,9 +31,10 @@ jQuery(document).ready(function($) {
 			}, 3000);
 			return;
 		}
-		$.post(BASE.url + 'pago/cargarPago', {ticket: ticket}, function(data, textStatus, xhr) {
+		$.post(BASE.url + 'pago/cargarPago', {ticket: ticket, check: check}, function(data, textStatus, xhr) {
 			if(data.data == "ok"){
 				$(".formPago input[name='ingreso']").val(data.ingreso);
+				$(".formPago input[name='dia']").val(data.dia);
 				$(".formPago input[name='fecha']").val(data.fecha);
 				$(".formPago input[name='horaIni']").val(data.horaIni);
 				$(".formPago input[name='horaFin']").val(data.horaFin);
@@ -45,7 +53,7 @@ jQuery(document).ready(function($) {
 		},"json");
 	});
 	$(".formPago input[name='recibido']").keyup(function(){
-    	if($(".formPago input[name='recibido']").val().length > 6){
+    	if($(".formPago input[name='recibido']").val().length > 4){
     		$(".formPago input[name='recibidoNumero']").val($(".formPago input[name='recibido']").val().substring(2).replace(',',''));
     		var devolver = $(".formPago input[name='recibido']").val().substring(2).replace(',','') - $(".formPago input[name='totalPagar']").val().substring(2).replace(',','');
     		$(".formPago input[name='devolverNumero']").val(devolver);
@@ -79,11 +87,28 @@ jQuery(document).ready(function($) {
 		},"json");
 	});
 	$(".formPagoMensual input[name='recibido']").keyup(function(){
-    	if($(".formPagoMensual input[name='recibido']").val().length > 6){
+    	if($(".formPagoMensual input[name='recibido']").val().length > 4){
     		$(".formPagoMensual input[name='recibidoNumero']").val($(".formPagoMensual input[name='recibido']").val().substring(2).replace(',',''));
     		var devolver = $(".formPagoMensual input[name='recibido']").val().substring(2).replace(',','') - $(".formPagoMensual input[name='totalPagar']").val().substring(2).replace(',','');
     		$(".formPagoMensual input[name='devolverNumero']").val(devolver);
     		$(".formPagoMensual input[name='devolver']").val(devolver);
+    	}
+	});
+	$("#tipoSancion").change(function(event) {
+		$.post(BASE.url + 'pago/cargarPagoSancion', {tipoSancion: $("#tipoSancion").val()}, function(data, textStatus, xhr) {
+			$(".formPagoSancion input[name='documento']").val($("#documento").val());
+			$(".formPagoSancion input[name='tipoSancion']").val($("#tipoSancion").val());
+			$(".formPagoSancion input[name='totalPagar']").val(data.totalPagar);
+			$(".formPagoSancion input[name='totalPagarNumero']").val(data.totalPagar);
+			$(".formPagoSancion input[name='recibido']").focus();
+		},'json');
+	});
+	$(".formPagoSancion input[name='recibido']").keyup(function(){
+    	if($(".formPagoSancion input[name='recibido']").val().length > 4){
+    		$(".formPagoSancion input[name='recibidoNumero']").val($(".formPagoSancion input[name='recibido']").val().substring(2).replace(',',''));
+    		var devolver = $(".formPagoSancion input[name='recibido']").val().substring(2).replace(',','') - $(".formPagoSancion input[name='totalPagar']").val().substring(2).replace(',','');
+    		$(".formPagoSancion input[name='devolverNumero']").val(devolver);
+    		$(".formPagoSancion input[name='devolver']").val(devolver);
     	}
 	});
 });

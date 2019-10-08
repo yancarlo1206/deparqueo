@@ -67,6 +67,13 @@ function __construct() {}
      */
     private $email;
 
+     /**
+     * @var string
+     *
+     * @Column(name="observacion", type="string", length=500, nullable=true)
+     */
+    private $observacion;
+
     /**
      * @var \Tipocliente
      *
@@ -247,6 +254,29 @@ function __construct() {}
     public function getEmail()
     {
         return $this->email;
+    }
+
+     /** 
+     * Set observacion
+     *
+     * @param string $observacion
+     * @return Cliente
+     */
+    public function setObservacion($observacion)
+    {
+        $this->observacion = $observacion;
+    
+        return $this;
+    }
+
+    /**
+     * Get observacion
+     *
+     * @return string 
+     */
+    public function getObservacion()
+    {
+        return $this->observacion;
     }
 
     /** 

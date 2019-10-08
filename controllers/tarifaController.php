@@ -3,6 +3,7 @@
 class tarifaController extends Controller {   
     public function __construct() {
         parent::__construct();
+        Session::accesoEstricto(array('AUXILIAR'));
         $this->_tipoTarifa = $this->loadModel("tipoTarifa");
         $this->_tipoVehiculo = $this->loadModel("tipovehiculo");
     }

@@ -15,7 +15,7 @@ class ingresoController extends Controller {
         $this->_view->renderizar('index', 'ingreso');
     }
 
-    public function registrar($tipo){
+    /*public function registrar($tipo){
         $tipoVehiculo = $this->_tipoVehiculo->get($tipo);
         $fechaIngreso = new \DateTime();
         $temp = $this->_ingreso->dql("SELECT i FROM Entities\Ingreso i WHERE i.fecha =:fecha",
@@ -79,7 +79,7 @@ class ingresoController extends Controller {
              Session::set('error','Error en el Proceso');       
         }
         $this->redireccionar('ingreso');
-    }
+    }*/
 
 }
 
