@@ -58,6 +58,12 @@ class View {
                     'icono' => 'fas fa-comment-dollar',
                     'enlace' => BASE_URL . 'tarifa/'
                     );
+             $menuConfiguracion[] = array(
+                    'id' => 'reporte',
+                    'titulo' => 'Reportes',
+                    'icono' => 'fas fa-print',
+                    'enlace' => BASE_URL . 'reporte/'
+                    );
         }
         if(Session::accesoView('CAJERO')){
             $menu[] = array(
@@ -77,6 +83,12 @@ class View {
                     'titulo' => 'Pagos Sancion',
                     'icono' => 'fa-money-bill-alt',
                     'enlace' => BASE_URL . 'pago/sancion/'
+                    );
+            $menuConfiguracion[] = array(
+                    'id' => 'reporte',
+                    'titulo' => 'Reportes',
+                    'icono' => 'fas fa-print',
+                    'enlace' => BASE_URL . 'reporte/'
                     );
         }
         if(Session::accesoView('ADMINISTRADOR')){

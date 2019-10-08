@@ -125,6 +125,12 @@
                   <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                   Profile
                 </a> -->
+		<?php if(Session::accesoViewEstricto(array('CAJERO'))){ ?>
+		<a class="dropdown-item" href="<?php echo BASE_URL ?>pago/reporteDia/">
+                  <i class="fas fa-print fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Recaudo D&iacute;a
+                </a>
+		<?php } ?>
                 <a class="dropdown-item" href="<?php echo BASE_URL ?>usuario/cambiar_clave/">
                   <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                   Cambiar Clave

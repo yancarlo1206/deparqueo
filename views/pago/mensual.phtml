@@ -52,10 +52,16 @@
                 <tbody>
                   <?php foreach ($this->pagos as $key => $value) { ?>
                   <tr>
-                    <td><?php echo $value->getFecha()->format('d/m/Y'); ?></td>
+                    <td><?php echo $value->getFechaRegistro()->format('d/m/Y h:i:s a'); ?></td>
                     <td><?php echo $value->getTarjeta()->getRfid(); ?></td>
                     <td><?php echo $value->getValor(); ?></td>
-                    <td></td>
+                    <td style="text-align: center">
+		      <a
+			  title="Descargar Factura" 
+	                  href="<?php echo BASE_URL.$this->_presentRequest->getControlador().'/'; ?>generarFacturaMensual/<?php echo $value->getId()->getId(); ?>/">
+	                  <i class="fas fa-print"></i>
+                      </a>
+		    </td>
                   </tr>
                   <?php } ?>
                 </tbody>

@@ -2,38 +2,49 @@
 
   <div class="card shadow mb-4">
   <div class="card-header py-3">
-      <h6 class="m-0 font-weight-bold text-primary">Informaci&oacute;n de Pase de Cortesia</h6>
+      <h6 class="m-0 font-weight-bold text-primary">Generar Reportes</h6>
   </div>
     <div class="card-body">
-      <form class="needs-validation" novalidate method="post">
+      <form class="needs-validation" novalidate method="post"> 
         <input type="hidden" name="guardar" value="1">
-        <input type="hidden" name="ingreso" value="<?php echo $this->ticket->getId() ?>">
         <div class="form-row">
           <div class="form-group col-md-12">
-            <label>Ticket</label>
-            <input 
-              name="ticket" 
-              type="text" 
-              class="form-control" 
-              value="<?php echo $this->ticket->getNumero() ?>" 
-              disabled >
+            <label>Reporte</label>
+            <select name="reporte" class="form-control" required>
+              <option value="">Seleccione...</option>
+              <option value="1">Reporte Diario</option>
+	      <option value="2">Reporte Pases Cortesia</option>
+            </select>
           </div>
         </div>
+
         <div class="form-row">
-          <div class="form-group col-md-12">
-            <label>Observaci&oacute;n</label>
-            <textarea 
-              name="observacion" 
+          <div class="form-group col-md-6">
+            <label>Fecha Inicio</label>
+	           <input 
+              name="fechaIni" 
               type="text" 
-              class="form-control" 
+              class="form-control datepicker" 
+              data-date-format="dd/mm/yyyy"
+              autocomplete="off"
               value="" 
-              maxlength="300" 
-              rows="4" 
-              required ></textarea>
+              required >
+          </div>
+          <div class="form-group col-md-6">
+            <label>Fecha Fin</label>
+             <input 
+              name="fechaFin" 
+              type="text" 
+              class="form-control datepicker" 
+              data-date-format="dd/mm/yyyy"
+              autocomplete="off"
+              value="" 
+              required >
           </div>
         </div>
+
         <div class="float-right">
-          <button type="submit" class="btn btn-primary">Registrar Pase Cortesia</button>
+          <button type="submit" class="btn btn-primary" >Generar</button> 
         </div>
       </form>
     </div>

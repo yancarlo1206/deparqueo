@@ -50,7 +50,7 @@ class clienteController extends Controller {
     }
 
     private function obj($new = true) {
-        $arrayTexto = array('documento', 'nombre', 'fechaNacimiento', 'telefono','correo');
+        $arrayTexto = array('documento', 'nombre', 'telefono');
         $arrayInt = array('tipoCliente');
         $rta = $this->validarArrays($arrayTexto, $arrayInt);
         if($rta){
@@ -59,8 +59,9 @@ class clienteController extends Controller {
         }
         $this->_model->getInstance()->setDocumento($this->getTexto('documento'));
         $this->_model->getInstance()->setNombre($this->getTexto('nombre'));
-        $this->_model->getInstance()->setFechaNacimiento(new \DateTime($this->getTexto('fechaNacimiento')));
+	$this->_model->getInstance()->setFechaNacimiento(new \DateTime($this->getFecha($this->getTexto('fechaNacimiento'))));
         $this->_model->getInstance()->setDireccion($this->getTexto('direccion'));
+        $this->_model->getInstance()->setObservacion($this->getTexto('observacion'));
         $this->_model->getInstance()->setTelefono($this->getTexto('telefono'));
         $this->_model->getInstance()->setEmail($this->getTexto('correo'));
         $this->_model->getInstance()->setTipoCliente($this->_tipoCliente->get($this->getInt('tipoCliente')));

@@ -3,7 +3,6 @@
 class pagoController extends Controller {   
     public function __construct() {
         parent::__construct();
-        Session::accesoEstricto(array('CAJERO'));
         $this->_ingreso = $this->loadModel('ingreso');
         $this->_ingresoNormal = $this->loadModel('ingresonormal');
 
@@ -29,6 +28,7 @@ class pagoController extends Controller {
     }
     
     public function index() {
+        Session::accesoEstricto(array('CAJERO'));
         $fecha = new \DateTime();
         $fechaIni = $fecha->format('Y-m-d')." 00:00:00";
         $fechaFin = $fecha->format('Y-m-d')." 23:59:59";
@@ -48,6 +48,7 @@ class pagoController extends Controller {
     }
 
     public function registrar(){
+        Session::accesoEstricto(array('CAJERO'));
     	if($this->getInt('guardar') == 1){
     		$this->_pago->getInstance()->setFecha(new \DateTime());
             $totalPagar = $this->getPostParam('totalPagarNumero');
@@ -65,6 +66,11 @@ class pagoController extends Controller {
             $this->_pago->getInstance()->setFactura($consecutivo);
     		try {
     			$this->_pago->save();
+                if($this->getInt('dia')){
+                    $this->_ingreso->get($this->getInt('ingreso'));
+                    $this->_ingreso->getInstance()->setDia(1);
+                    $this->_ingreso->update();
+                }
 	    		$this->_pagoServicio->getInstance()->setId($this->_pago->getInstance());
 	    		$this->_pagoServicio->getInstance()->setIngreso($this->_ingresoNormal->get($this->getInt('ingreso')));
 	    		$this->_pagoServicio->save();
@@ -83,6 +89,7 @@ class pagoController extends Controller {
 
     public function cargarPago(){
         $ticket = $this->getPostParam('ticket');
+        $check = $this->getPostParam('check');
     	$array = array();
     	$ingreso = $this->_ingreso->findByObject(array('numero' => $ticket));
         if(!$ingreso){
@@ -116,20 +123,46 @@ class pagoController extends Controller {
             echo json_encode($array);
             exit;
         }
-    	if($ingresoNormal){
+        if(!$check){
+            if($ingresoNormal){
+                $fechaEntrada = $ingreso->getFechaIngreso();
+                $fechaSalida = new \DateTime();
+                $fechaIntervalo = $fechaEntrada->diff($fechaSalida);
+                $totalPagar = $this->valorPagar($ingreso, $fechaIntervalo);
+            }
+            $array['data'] = "ok";
+            $array['ticket'] = $ingreso->getNumero();
+            $array['ingreso'] = $ingreso->getId();
+            $array['dia'] = 0;
+            $array['fecha'] = $ingreso->getFechaIngreso()->format("d/m/Y");
+            $array['horaIni'] = $fechaEntrada->format("h:i A");
+            $array['horaFin'] = $fechaSalida->format("h:i A");
+            $array['tiempoTotal'] = $fechaIntervalo->format("%h horas %i minutos");
+            $array['totalPagar'] = $totalPagar;
+        }else{
             $fechaEntrada = $ingreso->getFechaIngreso();
             $fechaSalida = new \DateTime();
             $fechaIntervalo = $fechaEntrada->diff($fechaSalida);
-    	    $totalPagar = $this->valorPagar($ingreso, $fechaIntervalo);
-    	}
-    	$array['data'] = "ok";
-    	$array['ticket'] = $ingreso->getNumero();
-    	$array['ingreso'] = $ingreso->getId();
-    	$array['fecha'] = $ingreso->getFechaIngreso()->format("d/m/Y");
-    	$array['horaIni'] = $fechaEntrada->format("h:i A");
-    	$array['horaFin'] = $fechaSalida->format("h:i A");
-    	$array['tiempoTotal'] = $fechaIntervalo->format("%h horas %i minutos");
-    	$array['totalPagar'] = $totalPagar;
+            $tipoVehiculo = $ingreso->getTipo()->getId();
+            $tipoTarifa = 6;
+            $tarifa = $this->_tarifa->dql("SELECT t FROM Entities\Tarifa t 
+            WHERE t.fechainicio <=:fecha AND t.fechafin >=:fecha 
+            AND t.tipovehiculo =:tipoVehiculo AND t.tipotarifa =:tipoTarifa",
+            array(
+                'fecha' => new \DateTime(), 
+                'tipoVehiculo' => $tipoVehiculo,
+                'tipoTarifa' => $tipoTarifa));
+            $totalPagar = $tarifa[0]->getValor();
+            $array['data'] = "ok";
+            $array['ticket'] = $ingreso->getNumero();
+            $array['ingreso'] = $ingreso->getId();
+            $array['dia'] = 1;
+            $array['fecha'] = $ingreso->getFechaIngreso()->format("d/m/Y");
+            $array['horaIni'] = $fechaEntrada->format("h:i A");
+            $array['horaFin'] = $fechaSalida->format("h:i A");
+            $array['tiempoTotal'] = $fechaIntervalo->format("%h horas %i minutos");
+            $array['totalPagar'] = $totalPagar;
+        }
     	echo json_encode($array);
     }
 
@@ -164,6 +197,7 @@ class pagoController extends Controller {
     }
 
     public function mensual() {
+        Session::accesoEstricto(array('CAJERO'));
         $fecha = new \DateTime();
         $this->_view->fecha = $fecha->format('d/m/Y');
         $fecha = $fecha->format('Y-m-d');
@@ -180,6 +214,7 @@ class pagoController extends Controller {
     }
 
     public function registrarmensual(){
+        Session::accesoEstricto(array('CAJERO'));
         if($this->getInt('guardar') == 1){
             $this->_pago->getInstance()->setFecha(new \DateTime());
             $totalPagar = $this->getPostParam('totalPagarNumero');
@@ -233,8 +268,10 @@ class pagoController extends Controller {
         $tipoCliente = $tarjeta->getCliente()->getTipoCliente()->getId();
         if($tipoCliente == 1){
             $tipoTarifa = 3;
-        }else{
+        }if($tipoCliente == 2){    
             $tipoTarifa = 5;
+        }else{
+            $tipoTarifa = 12;
         }
         $tarifa = $this->_tarifa->dql("SELECT t FROM Entities\Tarifa t 
             WHERE t.fechainicio <=:fecha AND t.fechafin >=:fecha 
@@ -252,6 +289,7 @@ class pagoController extends Controller {
     }
 
     public function sancion() {
+        Session::accesoEstricto(array('CAJERO'));
         $fecha = new \DateTime();
         $this->_view->fecha = $fecha->format('d/m/Y');
         //$fecha = $fecha->format('Y-m-d');
@@ -272,6 +310,7 @@ class pagoController extends Controller {
     }
 
     public function registrarsancion(){
+        Session::accesoEstricto(array('CAJERO'));
         if($this->getInt('guardar') == 1){
             $this->_pago->getInstance()->setFecha(new \DateTime());
             $documento = $this->getTexto('documento');
@@ -329,35 +368,75 @@ class pagoController extends Controller {
         "fecha" => $ingreso->getFecha()->format('d/m/Y'),
         "facturaventa" => $pago->getFactura(),
         "fechaingreso" => $ingreso->getFechaIngreso()->format('d/m/Y h:i:s'),
-        "fechasalida" => "29/09/2019 17:00:00",
+        "fechasalida" => $ingreso->getFecha()->format('d/m/Y'),
         "iva" => $pago->getIva(),
         "valortotal" => "".($pago->getValor() + $pago->getIva()),
         "entrego" => $pago->getEntrego(),
         "cambio" => $pago->getCambio(),
         "subtotal" => $pago->getValor());
-        $ch = curl_init("http://190.145.239.11:8086/pdf/0/factura_210");
+        $ch = curl_init("http://192.168.0.150:8086/pdf/0/factura_210");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($ch, CURLOPT_POSTFIELDS,json_encode($data));
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','X-Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb2RpZ28iOiIwMDIwMyIsInRpcG8iOiJkb2NlbnRlIn0.oOf_khS-4ZBzyGomdKd2_QswKCS-w2aJNir4CGV5-iM'));
         $response = curl_exec($ch);
         curl_close($ch);
-        header("Location:http://190.145.239.11:8085/files/informes/".$response);
+        header("Location:http://192.168.0.150:8085/files/informes/".$response);
+    }
+
+    public function generarFacturaMensual($pago=null){
+        $pagoMensual = $this->_pagoMensual->findByObject(array('id' => $pago));
+        $cliente = $pagoMensual->getTarjeta()->getCliente()->getDocumento();
+        $placa = $pagoMensual->getTarjeta()->getCliente()->getObservacion();
+        $tipoVehiculo = $pagoMensual->getTarjeta()->getTipoVehiculo()->getDescripcion();
+        $pago = $this->_pago->findByObject(array('id' => $pago));
+        $data = array(
+        "facturaventa" => $pago->getFactura(),
+        "fecha" => $pago->getFecha()->format('d/m/Y'),
+        "concepto" => "Mensualidad ".$tipoVehiculo,
+        "cliente" => $cliente,
+        "placa" => $placa,
+        "iva" => $pago->getIva(),
+        "valortotal" => "".($pago->getValor() + $pago->getIva()),
+        "entrego" => $pago->getEntrego(),
+        "cambio" => $pago->getCambio(),
+        "subtotal" => $pago->getValor());
+        $ch = curl_init("http://192.168.0.150:8086/pdf/0/facturao_210");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS,json_encode($data));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','X-Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb2RpZ28iOiIwMDIwMyIsInRpcG8iOiJkb2NlbnRlIn0.oOf_khS-4ZBzyGomdKd2_QswKCS-w2aJNir4CGV5-iM'));
+        $response = curl_exec($ch);
+        curl_close($ch);
+        header("Location:http://192.168.0.150:8085/files/informes/".$response);
     }
 
     public function reporteDiario(){
+        $fecha = new \DateTime();
+        $fechaReporte = $fecha->format('Y-m-d');
         $data = array(
-        "FECHA" => "2019-10-01");
-        $ch = curl_init("http://190.145.239.11:8086/pdf/1/reporteInformacionDiaria");
+        "FECHA" => $fechaReporte);
+        $ch = curl_init("http://192.168.0.150:8086/pdf/1/reporteInformacionDiaria");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($ch, CURLOPT_POSTFIELDS,json_encode($data));
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','X-Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb2RpZ28iOiIwMDIwMyIsInRpcG8iOiJkb2NlbnRlIn0.oOf_khS-4ZBzyGomdKd2_QswKCS-w2aJNir4CGV5-iM'));
         $response = curl_exec($ch);
-        var_dump(curl_error($ch));
-        var_dump(curl_errno($ch));
         curl_close($ch);
-        header("Location:http://190.145.239.11:8085/files/informes/".$response);
+        header("Location:http://192.168.0.150:8085/files/informes/".$response);
+    }
+
+    public function reporteDia(){
+        $data = array(
+        "USUARIO" => Session::get('usuario'));
+        $ch = curl_init("http://192.168.0.150:8086/pdf/1/cierrecaja_210");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS,json_encode($data));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','X-Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb2RpZ28iOiIwMDIwMyIsInRpcG8iOiJkb2NlbnRlIn0.oOf_khS-4ZBzyGomdKd2_QswKCS-w2aJNir4CGV5-iM'));
+        $response = curl_exec($ch);
+        curl_close($ch);
+        header("Location:http://192.168.0.150:8085/files/informes/".$response);
     }
 
 }

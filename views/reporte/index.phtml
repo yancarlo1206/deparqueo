@@ -1,17 +1,17 @@
 <div class="container-fluid">
 
         <!-- Page Heading -->
-        <h1 class="h3 mb-2 text-gray-800">Listado de Usuarios</h1>
+        <h1 class="h3 mb-2 text-gray-800">Listado de Clientes</h1>
         <!-- DataTales Example -->
 
         <div class="card shadow mb-4">
           <div class="card-header py-3">
             <div class="float-sm-right">
-              <a href="<?php echo BASE_URL ?>usuario/agregar/" class="btn btn-primary btn-icon-split">
+              <a href="<?php echo BASE_URL ?>cliente/agregar/" class="btn btn-primary btn-icon-split">
                 <span class="icon text-white-50">
                   <i class="fas fa-check"></i>
                 </span>
-                <span class="text">Registrar Usuario</span>
+                <span class="text">Registrar Cliente</span>
               </a>
             </div>
           </div>
@@ -21,35 +21,34 @@
               <table class="table table-bordered" id="dataTableEsp" width="100%" cellspacing="0">
                 <thead>
                   <tr>
-                    <th>Usuario</th>
                     <th>Documento</th>
                     <th>Nombre</th>
+                    <th>Telefono</th>
                     <th>Correo</th>
-                    <th>Rol</th>
+                    <th>Tipp Cliente</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
                 <tfoot>
                   <tr>
-                    <th>Usuario</th>
                     <th>Documento</th>
                     <th>Nombre</th>
+                    <th>Telefono</th>
                     <th>Correo</th>
-                    <th>Rol</th>
+                    <th>Tipp Cliente</th>
                     <th>Acciones</th>
                   </tr>
                 </tfoot>
                 <tbody>
                   <?php foreach ($this->datos as $key => $value) { ?>
                   <tr>
-                    <td><?php echo $value->getUsuario(); ?></td>
                     <td><?php echo $value->getDocumento(); ?></td>
                     <td><?php echo $value->getNombre(); ?></td>
+                    <td><?php echo $value->getTelefono(); ?></td>
                     <td><?php echo $value->getEmail(); ?></td>
-                    <td><?php echo $value->getRol()->getDescripcion(); ?></td>
+                    <td><?php echo $value->getTipocliente()->getDescripcion(); ?></td>
                     <td class="text-center">
                       <a title="Actualizar" href="<?php echo BASE_URL.$this->_presentRequest->getControlador().'/'; ?>actualizar/<?php echo $value->getId(); ?>/"><i class="fas fa-edit"></i></a>
-                      <a title="Reiniciar Clave" href="<?php echo BASE_URL.$this->_presentRequest->getControlador().'/'; ?>reiniciar_clave/<?php echo $value->getId(); ?>/"><i class="fas fa-redo"></i></a>
                     </td>
                   </tr>
                   <?php } ?>

@@ -97,6 +97,20 @@ class usuarioController extends Controller {
         $this->_view->renderizar('clave', '');
     }
 
+    public function reiniciar_clave($id=null){
+    	$this->_usuario = $this->loadModel('usuario');
+        $this->_usuario->get($id);
+	if(!$this->_usuario->getInstance()){
+          Session::set('error','Usuario No Existe');
+          $this->redireccionar('usuario');
+        }
+        $this->_usuario->getInstance()->setClave(Hash::getHash('sha1', '1234', HASH_KEY));            
+	$this->_usuario->update();
+        Session::set('mensaje','Clave Reiniciada Correctamente');
+        $this->redireccionar('usuario');
+
+    }
+
 }
 
 ?>
