@@ -40,7 +40,10 @@ class pagoController extends Controller {
             $fechaFin = $fecha->format('Y-m-d')." 23:59:59";
         }
     	$this->_view->pagos = $this->_pago->dql(
-            "SELECT p FROM Entities\Pago p WHERE p.fecha >=:fechaIni AND p.fecha <=:fechaFin AND p.ingreso is not null",
+            "SELECT p.fecha, i.numero, sum(p.valor+p.iva) as total FROM Entities\Pago p 
+            INNER JOIN Entities\Ingreso i WITH i.id = p.ingreso
+            WHERE p.fecha >=:fechaIni AND p.fecha <=:fechaFin AND p.ingreso is not null
+            GROUP BY p.ingreso",
            array('fechaIni' => $fechaIni, 'fechaFin' => $fechaFin)
         );
     	$this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' :: Listado';
@@ -52,6 +55,12 @@ class pagoController extends Controller {
     	if($this->getInt('guardar') == 1){
     		$this->_pago->getInstance()->setFecha(new \DateTime());
             $totalPagar = $this->getPostParam('totalPagarNumero');
+            $ingreso = $this->_ingreso->get($this->getInt('ingreso'));
+            if($ingreso->getCasco() > 0){
+                $this->_tipoSancion->get(3);
+                $valorAdicional = $this->_tipoSancion->getInstance()->getValor() * $ingreso->getCasco();
+                $totalPagar = $totalPagar - $valorAdicional;
+              }
             $iva = $totalPagar * 0.19;
             $valor = $totalPagar - $iva;
     		$this->_pago->getInstance()->setValor($valor);
@@ -74,6 +83,26 @@ class pagoController extends Controller {
 	    		$this->_pagoServicio->getInstance()->setId($this->_pago->getInstance());
 	    		$this->_pagoServicio->getInstance()->setIngreso($this->_ingresoNormal->get($this->getInt('ingreso')));
 	    		$this->_pagoServicio->save();
+                if($ingreso->getCasco() > 0){
+                    $this->_pago = $this->loadModel('pago');
+                    $iva = $valorAdicional * 0.19;
+                    $valor = $valorAdicional - $iva;
+                    $this->_pago->getInstance()->setFecha(new \DateTime());
+                    $this->_pago->getInstance()->setValor($valor);
+                    $this->_pago->getInstance()->setIva($iva);
+                    $this->_pago->getInstance()->setEntrego(0);
+                    $this->_pago->getInstance()->setCambio(0);
+                    $this->_pago->getInstance()->setIngreso($this->_ingreso->getInstance());
+                    $this->_pago->getInstance()->setUsuario($this->_usuario->getInstance());
+                    $this->_pago->getInstance()->setCaja($this->_caja->get(1));
+                    $this->_pago->getInstance()->setFactura($consecutivo);
+                    $this->_pago->save();
+                    $this->_pagoSancion->getInstance()->setId($this->_pago->getInstance());
+                    $this->_pagoSancion->getInstance()->setDocumento(0);
+                    $this->_pagoSancion->getInstance()->setFecha(new \DateTime());
+                    $this->_pagoSancion->getInstance()->setTipoSancion($this->_tipoSancion->get(3));
+                    $this->_pagoSancion->save();
+                  }
                 $consecutivo = $consecutivo+1;
                 $this->_variable->getInstance()->setValor($consecutivo);
                 $this->_variable->update();
@@ -138,7 +167,12 @@ class pagoController extends Controller {
             $array['horaIni'] = $fechaEntrada->format("h:i A");
             $array['horaFin'] = $fechaSalida->format("h:i A");
             $array['tiempoTotal'] = $fechaIntervalo->format("%h horas %i minutos");
-            $array['totalPagar'] = $totalPagar;
+            $valorAdicional = 0;
+            if($ingreso->getCasco() > 0){
+              $this->_tipoSancion->get(3);
+              $valorAdicional = $this->_tipoSancion->getInstance()->getValor() * $ingreso->getCasco();
+            }
+            $array['totalPagar'] = $totalPagar + $valorAdicional;
         }else{
             $fechaEntrada = $ingreso->getFechaIngreso();
             $fechaSalida = new \DateTime();
@@ -161,6 +195,7 @@ class pagoController extends Controller {
             $array['horaIni'] = $fechaEntrada->format("h:i A");
             $array['horaFin'] = $fechaSalida->format("h:i A");
             $array['tiempoTotal'] = $fechaIntervalo->format("%h horas %i minutos");
+            $valorAdicional = 0;
             $array['totalPagar'] = $totalPagar;
         }
     	echo json_encode($array);
@@ -362,26 +397,48 @@ class pagoController extends Controller {
 
     public function generarFactura($ticket=null){
         $ingreso = $this->_ingreso->findByObject(array('numero' => $ticket));
-        $pago = $this->_pago->findByObject(array('ingreso' => $ingreso->getId()));
+        $pago = $this->_pago->findBy(array('ingreso' => $ingreso->getId()));
+        $iva = 0;
+        $valorTotal = 0;
+        $entrego = 0;
+        $cambio = 0;
+        $subtotal = 0;
+        foreach ($pago as $key => $value) {
+           $iva = $iva + $value->getIva();
+           $valorTotal = $valorTotal + $value->getValor() + $value->getIva();
+           $entrego = $entrego + $value->getEntrego();
+           $cambio = $cambio + $value->getEntrego();
+           $subtotal = $subtotal + $value->getValor();
+        }
+        $casco = 0;
+        if($ingreso->getCasco() > 0){
+            $casco = $ingreso->getCasco();
+        }
         $data = array(
         "ticket" => $ticket,
         "fecha" => $ingreso->getFecha()->format('d/m/Y'),
+<<<<<<< HEAD
         "facturaventa" => $pago->getFactura(),
         "fechaingreso" => $ingreso->getFechaIngreso()->format('d/m/Y H:i:s'),
+=======
+        "facturaventa" => $pago[0]->getFactura(),
+        "fechaingreso" => $ingreso->getFechaIngreso()->format('d/m/Y h:i:s'),
+>>>>>>> 04346bc3b6dfb88237589d9724d2b933bc6bcecd
         "fechasalida" => $ingreso->getFecha()->format('d/m/Y'),
-        "iva" => $pago->getIva(),
-        "valortotal" => "".($pago->getValor() + $pago->getIva()),
-        "entrego" => $pago->getEntrego(),
-        "cambio" => $pago->getCambio(),
-        "subtotal" => $pago->getValor());
-        $ch = curl_init("http://192.168.0.150:8086/pdf/0/factura_210");
+        "casco" => $casco,
+        "iva" => $iva,
+        "valortotal" => "".($valorTotal),
+        "entrego" => $entrego,
+        "cambio" => $cambio,
+        "subtotal" => $subtotal);
+        $ch = curl_init("http://190.145.239.11:8086/pdf/0/factura_210");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($ch, CURLOPT_POSTFIELDS,json_encode($data));
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','X-Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb2RpZ28iOiIwMDIwMyIsInRpcG8iOiJkb2NlbnRlIn0.oOf_khS-4ZBzyGomdKd2_QswKCS-w2aJNir4CGV5-iM'));
         $response = curl_exec($ch);
         curl_close($ch);
-        header("Location:http://192.168.0.150:8085/files/informes/".$response);
+        header("Location:http://190.145.239.11:8085/files/informes/".$response);
     }
 
     public function generarFacturaMensual($pago=null){
