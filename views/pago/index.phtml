@@ -53,13 +53,13 @@
                 <tbody>
                   <?php foreach ($this->pagos as $key => $value) { ?>
                   <tr>
-                    <td><?php echo $value->getFecha()->format('d/m/Y h:i:s a'); ?></td>
-                    <td><?php echo $value->getIngreso()->getNumero(); ?></td>
-                    <td><?php echo $value->getValor()+$value->getIva(); ?></td>
+                    <td><?php echo $value['fecha']->format('d/m/Y h:i:s a'); ?></td>
+                    <td><?php echo $value['numero']; ?></td>
+                    <td><?php echo $value['total']; ?></td>
                     <td style="text-align: center">
                       <a 
                         title="Descargar Factura" 
-                        href="<?php echo BASE_URL.$this->_presentRequest->getControlador().'/'; ?>generarFactura/<?php echo $value->getIngreso()->getNumero(); ?>/">
+                        href="<?php echo BASE_URL.$this->_presentRequest->getControlador().'/'; ?>generarFactura/<?php echo $value['numero']; ?>/">
                         <i class="fas fa-print"></i>
                       </a>
                     </td>

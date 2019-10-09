@@ -61,6 +61,13 @@ function __construct() {}
     private $dia;
 
     /**
+     * @var string
+     *
+     * @Column(name="casco", type="integer")
+     */
+    private $casco;
+
+    /**
      * @var \Tipovehiculo
      *
      * @ManyToOne(targetEntity="Tipovehiculo")
@@ -211,6 +218,29 @@ function __construct() {}
     public function getDia()
     {
         return $this->dia;
+    }
+
+    /** 
+     * Set casco
+     *
+     * @param string $casco
+     * @return Ingreso
+     */
+    public function setCasco($casco)
+    {
+        $this->casco = $casco;
+    
+        return $this;
+    }
+
+    /**
+     * Get casco
+     *
+     * @return string 
+     */
+    public function getCasco()
+    {
+        return $this->casco;
     }
 
     /** 
