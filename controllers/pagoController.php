@@ -367,7 +367,7 @@ class pagoController extends Controller {
         "ticket" => $ticket,
         "fecha" => $ingreso->getFecha()->format('d/m/Y'),
         "facturaventa" => $pago->getFactura(),
-        "fechaingreso" => $ingreso->getFechaIngreso()->format('d/m/Y h:i:s'),
+        "fechaingreso" => $ingreso->getFechaIngreso()->format('d/m/Y H:i:s'),
         "fechasalida" => $ingreso->getFecha()->format('d/m/Y'),
         "iva" => $pago->getIva(),
         "valortotal" => "".($pago->getValor() + $pago->getIva()),
