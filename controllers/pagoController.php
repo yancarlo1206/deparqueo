@@ -43,7 +43,7 @@ class pagoController extends Controller {
             "SELECT p.fecha, i.numero, sum(p.valor+p.iva) as total FROM Entities\Pago p 
             INNER JOIN Entities\Ingreso i WITH i.id = p.ingreso
             WHERE p.fecha >=:fechaIni AND p.fecha <=:fechaFin AND p.ingreso is not null
-            GROUP BY p.ingreso",
+            GROUP BY p.ingreso order by p.fecha desc",
            array('fechaIni' => $fechaIni, 'fechaFin' => $fechaFin)
         );
     	$this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' :: Listado';
@@ -82,6 +82,7 @@ class pagoController extends Controller {
                 }
 	    		$this->_pagoServicio->getInstance()->setId($this->_pago->getInstance());
 	    		$this->_pagoServicio->getInstance()->setIngreso($this->_ingresoNormal->get($this->getInt('ingreso')));
+                        $this->_pagoServicio->getInstance()->setAdicional(0);
 	    		$this->_pagoServicio->save();
                 if($ingreso->getCasco() > 0){
                     $this->_pago = $this->loadModel('pago');
@@ -241,7 +242,7 @@ class pagoController extends Controller {
             $this->_view->fecha = $fecha->format('d/m/Y');
         }
         $this->_view->pagos = $this->_pago->dql(
-            "SELECT p FROM Entities\Pagomensual p WHERE p.fecha =:fecha",
+            "SELECT p FROM Entities\Pagomensual p WHERE p.fecha =:fecha order by p.fecharegistro desc",
            array('fecha' => $fecha)
         );
         $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' Mensual :: Listado';
@@ -303,7 +304,7 @@ class pagoController extends Controller {
         $tipoCliente = $tarjeta->getCliente()->getTipoCliente()->getId();
         if($tipoCliente == 1){
             $tipoTarifa = 3;
-        }if($tipoCliente == 2){    
+        }elseif($tipoCliente == 2){    
             $tipoTarifa = 5;
         }else{
             $tipoTarifa = 12;
@@ -337,7 +338,7 @@ class pagoController extends Controller {
             $fechaFin = $fecha->format('Y-m-d')." 23:59:59";
         }
         $this->_view->pagos = $this->_pago->dql(
-            "SELECT p FROM Entities\Pagosancion p WHERE p.fecha >=:fechaIni AND p.fecha <=:fechaFin",
+            "SELECT p FROM Entities\Pagosancion p WHERE p.fecha >=:fechaIni AND p.fecha <=:fechaFin order by p.fecha desc",
            array('fechaIni' => $fechaIni, 'fechaFin' => $fechaFin)
         );
         $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' Sancion :: Listado';
@@ -407,7 +408,7 @@ class pagoController extends Controller {
            $iva = $iva + $value->getIva();
            $valorTotal = $valorTotal + $value->getValor() + $value->getIva();
            $entrego = $entrego + $value->getEntrego();
-           $cambio = $cambio + $value->getEntrego();
+           $cambio = $cambio + $value->getCambio();
            $subtotal = $subtotal + $value->getValor();
         }
         $casco = 0;
@@ -415,30 +416,25 @@ class pagoController extends Controller {
             $casco = $ingreso->getCasco();
         }
         $data = array(
-        "ticket" => $ticket,
+        "ticket" => "".$ticket,
         "fecha" => $ingreso->getFecha()->format('d/m/Y'),
-<<<<<<< HEAD
-        "facturaventa" => $pago->getFactura(),
-        "fechaingreso" => $ingreso->getFechaIngreso()->format('d/m/Y H:i:s'),
-=======
         "facturaventa" => $pago[0]->getFactura(),
-        "fechaingreso" => $ingreso->getFechaIngreso()->format('d/m/Y h:i:s'),
->>>>>>> 04346bc3b6dfb88237589d9724d2b933bc6bcecd
+        "fechaingreso" => $ingreso->getFechaIngreso()->format('d/m/Y H:i:s'),
         "fechasalida" => $ingreso->getFecha()->format('d/m/Y'),
-        "casco" => $casco,
-        "iva" => $iva,
-        "valortotal" => "".($valorTotal),
-        "entrego" => $entrego,
-        "cambio" => $cambio,
-        "subtotal" => $subtotal);
-        $ch = curl_init("http://190.145.239.11:8086/pdf/0/factura_210");
+        "casco" => "".$casco,
+        "iva" => "".$iva,
+        "valortotal" => "".$valorTotal,
+        "entrego" => "".$entrego,
+        "cambio" => "".$cambio,
+        "subtotal" => "".$subtotal);
+	$ch = curl_init("http://192.168.0.150:8086/pdf/0/factura_210");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($ch, CURLOPT_POSTFIELDS,json_encode($data));
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','X-Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb2RpZ28iOiIwMDIwMyIsInRpcG8iOiJkb2NlbnRlIn0.oOf_khS-4ZBzyGomdKd2_QswKCS-w2aJNir4CGV5-iM'));
         $response = curl_exec($ch);
         curl_close($ch);
-        header("Location:http://190.145.239.11:8085/files/informes/".$response);
+        header("Location:http://192.168.0.150:8085/files/informes/".$response);
     }
 
     public function generarFacturaMensual($pago=null){
@@ -453,6 +449,31 @@ class pagoController extends Controller {
         "concepto" => "Mensualidad ".$tipoVehiculo,
         "cliente" => $cliente,
         "placa" => $placa,
+        "iva" => $pago->getIva(),
+        "valortotal" => "".($pago->getValor() + $pago->getIva()),
+        "entrego" => $pago->getEntrego(),
+        "cambio" => $pago->getCambio(),
+        "subtotal" => $pago->getValor());
+        $ch = curl_init("http://192.168.0.150:8086/pdf/0/facturao_210");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS,json_encode($data));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','X-Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb2RpZ28iOiIwMDIwMyIsInRpcG8iOiJkb2NlbnRlIn0.oOf_khS-4ZBzyGomdKd2_QswKCS-w2aJNir4CGV5-iM'));
+        $response = curl_exec($ch);
+        curl_close($ch);
+        header("Location:http://192.168.0.150:8085/files/informes/".$response);
+    }
+
+    public function generarFacturaSancion($pago=null){
+        $pagoSancion = $this->_pagoSancion->findByObject(array('id' => $pago));
+        $cliente = $pagoSancion->getDocumento();
+        $tipoSancion = $pagoSancion->getTipoSancion()->getDescripcion();
+        $pago = $this->_pago->findByObject(array('id' => $pago));
+        $data = array(
+        "facturaventa" => $pago->getFactura(),
+        "fecha" => $pago->getFecha()->format('d/m/Y'),
+        "concepto" => $tipoSancion,
+        "cliente" => $cliente,
         "iva" => $pago->getIva(),
         "valortotal" => "".($pago->getValor() + $pago->getIva()),
         "entrego" => $pago->getEntrego(),
@@ -485,7 +506,7 @@ class pagoController extends Controller {
 
     public function reporteDia(){
         $data = array(
-        "USUARIO" => Session::get('usuario'));
+        "usuario" => Session::get('usuario'));
         $ch = curl_init("http://192.168.0.150:8086/pdf/1/cierrecaja_210");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");

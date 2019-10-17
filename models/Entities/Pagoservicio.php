@@ -38,6 +38,13 @@ function __construct() {}
      */
     private $id;
 
+     /**
+     * @var integer
+     *
+     * @Column(name="adicional", type="integer", nullable=true)
+     */
+    private $adicional;
+
 
     /** 
      * Set ingreso
@@ -84,4 +91,28 @@ function __construct() {}
     {
         return $this->id;
     }
+
+     /** 
+     * Set adicional
+     *
+     * @param \Pago $adicional
+     * @return Pagoservicio
+     */
+    public function setAdicional($adicional)
+    {
+        $this->adicional = $adicional;
+    
+        return $this;
+    }
+
+    /**
+     * Get adicional
+     *
+     * @return \Pago 
+     */
+    public function getAdicional()
+    {
+        return $this->adicional;
+    }
+
 }

@@ -14,6 +14,8 @@
               <option value="">Seleccione...</option>
               <option value="1">Reporte Diario</option>
 	      <option value="2">Reporte Pases Cortesia</option>
+              <option value="3">Reporte Informaci&oacute;n Tarjetas RFID</option>
+	      <option value="4">Reporte Pago Mensualidades</option>
             </select>
           </div>
         </div>
@@ -27,7 +29,7 @@
               class="form-control datepicker" 
               data-date-format="dd/mm/yyyy"
               autocomplete="off"
-              value="" 
+              value="<?php echo $this->fecha ?>" 
               required >
           </div>
           <div class="form-group col-md-6">
@@ -38,7 +40,7 @@
               class="form-control datepicker" 
               data-date-format="dd/mm/yyyy"
               autocomplete="off"
-              value="" 
+              value="<?php echo $this->fecha ?>" 
               required >
           </div>
         </div>

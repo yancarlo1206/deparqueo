@@ -36,6 +36,7 @@
               <table class="table table-bordered" id="dataTableEsp" width="100%" cellspacing="0">
                 <thead>
                   <tr>
+                    <th>#</th>
                     <th>Fecha</th>
                     <th>Ticket</th>
                     <th>Valor</th>
@@ -44,6 +45,7 @@
                 </thead>
                 <tfoot>
                   <tr>
+                    <th>#</th>
                     <th>Fecha</th>
                     <th>Ticket</th>
                     <th>Valor</th>
@@ -53,7 +55,8 @@
                 <tbody>
                   <?php foreach ($this->pagos as $key => $value) { ?>
                   <tr>
-                    <td><?php echo $value['fecha']->format('d/m/Y h:i:s a'); ?></td>
+                    <td><?php echo $key+1; ?></td>
+                    <td data-order="<?php echo $value['fecha']->format("U") ?>"><?php echo $value['fecha']->format('d/m/Y h:i:s a'); ?></td>
                     <td><?php echo $value['numero']; ?></td>
                     <td><?php echo $value['total']; ?></td>
                     <td style="text-align: center">

@@ -35,6 +35,7 @@
               <table class="table table-bordered" id="dataTableEsp" width="100%" cellspacing="0">
                 <thead>
                   <tr>
+                    <th>#</th>
                     <th>Fecha</th>
                     <th>Tarjeta</th>
                     <th>Valor</th>
@@ -43,6 +44,7 @@
                 </thead>
                 <tfoot>
                   <tr>
+                    <th>#</th>
                     <th>Fecha</th>
                     <th>Ticket</th>
                     <th>Valor</th>
@@ -52,16 +54,17 @@
                 <tbody>
                   <?php foreach ($this->pagos as $key => $value) { ?>
                   <tr>
-                    <td><?php echo $value->getFechaRegistro()->format('d/m/Y h:i:s a'); ?></td>
+		    <td><?php echo $key+1; ?></td>
+                    <td data-order="<?php echo $value->getFechaRegistro()->format("U") ?>"><?php echo $value->getFechaRegistro()->format('d/m/Y h:i:s a'); ?></td>
                     <td><?php echo $value->getTarjeta()->getRfid(); ?></td>
                     <td><?php echo $value->getValor(); ?></td>
                     <td style="text-align: center">
-		      <a
-			  title="Descargar Factura" 
-	                  href="<?php echo BASE_URL.$this->_presentRequest->getControlador().'/'; ?>generarFacturaMensual/<?php echo $value->getId()->getId(); ?>/">
-	                  <i class="fas fa-print"></i>
+            		      <a
+            			     title="Descargar Factura" 
+	                     href="<?php echo BASE_URL.$this->_presentRequest->getControlador().'/'; ?>generarFacturaMensual/<?php echo $value->getId()->getId(); ?>/">
+	                       <i class="fas fa-print"></i>
                       </a>
-		    </td>
+		                </td>
                   </tr>
                   <?php } ?>
                 </tbody>

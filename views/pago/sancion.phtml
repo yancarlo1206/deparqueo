@@ -35,16 +35,18 @@
               <table class="table table-bordered" id="dataTableEsp" width="100%" cellspacing="0">
                 <thead>
                   <tr>
+                    <th>#</th>
                     <th>Fecha</th>
-                    <th>Tarjeta</th>
+                    <th>Documento</th>
                     <th>Valor</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
                 <tfoot>
                   <tr>
+                    <th>#</th>
                     <th>Fecha</th>
-                    <th>Ticket</th>
+                    <th>Documento</th>
                     <th>Valor</th>
                     <th>Acciones</th>
                   </tr>
@@ -52,10 +54,17 @@
                 <tbody>
                   <?php foreach ($this->pagos as $key => $value) { ?>
                   <tr>
-                    <td><?php echo $value->getFecha()->format('d/m/Y'); ?></td>
+                    <td><?php echo $key+1 ?></td>
+                    <td data-order="<?php echo $value->getFecha()->format("U") ?>"><?php echo $value->getFecha()->format('d/m/Y h:i:s a'); ?></td>
                     <td><?php echo $value->getDocumento(); ?></td>
                     <td><?php echo $value->getTipoSancion()->getDescripcion(); ?></td>
-                    <td></td>
+                    <td style="text-align: center">
+                      <a
+                       title="Descargar Factura" 
+                       href="<?php echo BASE_URL.$this->_presentRequest->getControlador().'/'; ?>generarFacturaSancion/<?php echo $value->getId()->getId(); ?>/">
+                         <i class="fas fa-print"></i>
+                      </a>
+                    </td>
                   </tr>
                   <?php } ?>
                 </tbody>

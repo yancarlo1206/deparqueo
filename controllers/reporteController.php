@@ -16,11 +16,16 @@ class reporteController extends Controller {
                 "FECHAFIN" => $fechaFin,
                 "FECHA" => $fechaIni
             );
-	    if($this->getInt('reporte') == 1){
-              $reporte = 'reporteInformacionDiaria';
-            }else{
-              $reporte = 'reporteInformacionCortesia';
+	        if($this->getInt('reporte') == 1){
+                $reporte = 'reporteInformacionDiaria';
+            }elseif($this->getInt('reporte') == 2){
+                $reporte = 'reporteInformacionCortesia';
+            }elseif($this->getInt('reporte') == 3){
+                $reporte = 'reporteInformacionTarjetas';
+            }elseif($this->getInt('reporte') == 4){
+                $reporte = 'reportePagoMensualidad';
             }
+
             $ch = curl_init("http://192.168.0.150:8086/pdf/1/".$reporte);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
@@ -32,6 +37,7 @@ class reporteController extends Controller {
             curl_close($ch);
             header("Location:http://192.168.0.150:8085/files/informes/".$response);
         }
+        $this->_view->fecha = (new \DateTime())->format('d/m/Y');
         $this->_view->titulo = "Reportes";
         $this->_view->renderizar('obj', 'reporte');
     }
