@@ -153,6 +153,39 @@ class pagoController extends Controller {
             echo json_encode($array);
             exit;
         }
+        $fechaEntrada = $ingreso->getFecha();
+        $fechaSalida = new \DateTime();
+        $fechaIntervalo = $fechaEntrada->diff($fechaSalida);
+        $dias = $fechaIntervalo->format('%d');
+        if($dias > 0){
+            $valorPagarTemporal = 0;
+            $valorNoche = $this->calcularPagoNoche($ingreso, $dias);
+            $fechaEntrada = $ingreso->getFechaIngreso();
+            $fechaSalida = new \DateTime($ingreso->getFecha()->format('d-m-Y').' 19:00:00');
+            $fechaIntervalo = $fechaEntrada->diff($fechaSalida);
+            $totalAyer = $this->valorPagar($ingreso, $fechaIntervalo);
+            $fechaEntrada = new \DateTime((new \DateTime())->format('d-m-Y').' 07:00:00');
+            $fechaSalida = new \DateTime();
+            $fechaIntervalo = $fechaEntrada->diff($fechaSalida);
+            $totalHoy = $this->valorPagar($ingreso, $fechaIntervalo);
+            $valorPagarTemporal = $valorNoche + $totalAyer + $totalHoy;
+            $array['data'] = "ok";
+            $array['ticket'] = $ingreso->getNumero();
+            $array['ingreso'] = $ingreso->getId();
+            $array['dia'] = 2;
+            $array['fecha'] = (new \DateTime())->format('d/m/Y');
+            $array['fechaEntrada'] = $ingreso->getFechaIngreso()->format("d/m/Y h:i a");
+            $array['fechaSalida'] = (new \DateTime())->format('d/m/Y h:i a');
+            $array['tiempoTotal'] = $fechaIntervalo->format("%h horas %i minutos");
+            $valorAdicional = 0;
+            if($ingreso->getCasco() > 0){
+              $this->_tipoSancion->get(3);
+              $valorAdicional = $this->_tipoSancion->getInstance()->getValor() * $ingreso->getCasco();
+            }
+            $array['totalPagar'] = $valorPagarTemporal + $valorAdicional;
+            echo json_encode($array);
+            exit;
+        }
         if(!$check){
             if($ingresoNormal){
                 $fechaEntrada = $ingreso->getFechaIngreso();
@@ -515,6 +548,19 @@ class pagoController extends Controller {
         $response = curl_exec($ch);
         curl_close($ch);
         header("Location:http://192.168.0.150:8085/files/informes/".$response);
+    }
+
+    public function calcularPagoNoche($ingreso, $dias){
+        $tipoTarifa = 7;
+        $tipoVehiculo = $ingreso->getTipo()->getId();
+        $tarifa = $this->_tarifa->dql("SELECT t FROM Entities\Tarifa t 
+            WHERE t.fechainicio <=:fecha AND t.fechafin >=:fecha 
+            AND t.tipovehiculo =:tipoVehiculo AND t.tipotarifa =:tipoTarifa",
+            array(
+                'fecha' => new \DateTime(), 
+                'tipoVehiculo' => $tipoVehiculo,
+                'tipoTarifa' => $tipoTarifa));
+        return $tarifa[0]->getValor() * $dias;
     }
 
 }

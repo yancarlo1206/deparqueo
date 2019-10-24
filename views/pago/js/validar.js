@@ -36,9 +36,16 @@ jQuery(document).ready(function($) {
 				$(".formPago input[name='ingreso']").val(data.ingreso);
 				$(".formPago input[name='dia']").val(data.dia);
 				$(".formPago input[name='fecha']").val(data.fecha);
-				$(".formPago input[name='horaIni']").val(data.horaIni);
-				$(".formPago input[name='horaFin']").val(data.horaFin);
-				$(".formPago input[name='tiempoTotal']").val(data.tiempoTotal);
+				if(data.dia === 2){
+					$('.pagoNormal').css('display', 'none');
+					$('.pagoNoche').css('display', 'block');
+					$(".formPago input[name='fechaEntrada']").val(data.fechaEntrada);
+					$(".formPago input[name='fechaSalida']").val(data.fechaSalida);
+				}else{
+					$(".formPago input[name='horaIni']").val(data.horaIni);
+					$(".formPago input[name='horaFin']").val(data.horaFin);
+					$(".formPago input[name='tiempoTotal']").val(data.tiempoTotal);
+				}
 				$(".formPago input[name='totalPagar']").val(data.totalPagar);
 				$(".formPago input[name='totalPagarNumero']").val(data.totalPagar);
 				$(".formPago input[name='recibido']").prop("disabled", false);
