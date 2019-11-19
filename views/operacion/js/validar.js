@@ -13,6 +13,27 @@ jQuery(document).ready(function($) {
 			$("#btnCalcular").click();	 		
 		}
  	}, 100);
+
+	$("#btnRegistrarPago").click(function(event) {
+		event.preventDefault();
+		alert("Click");
+		$.post(BASE.url + 'pago/prueba', $(".formPago").serialize(), function(data, textStatus, xhr) {
+        	$.ajax({
+                contentType: "application/json",
+                url : 'http://localhost:8090/reporte/imprimir/ticket_210',
+                data : JSON.stringify('{"ticke":"MOT009234","fecha":"12/06/2019"}'), 
+                method : 'post', //en este caso
+                dataType : 'json',
+                success : function(response){
+                       //codigo de exito
+                },
+                error: function(error){
+                       //codigo error
+                }
+        	});
+		},'json');
+	});
+
 	$("#btnCalcular").click(function(event) {
 		event.preventDefault();
 		var ticket = $("#inputTicket").val();

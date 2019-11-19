@@ -61,7 +61,9 @@
   <script src="<?php echo BASE_URL ?>public/js/inputmask/jquery.inputmask.js"></script>
   <script src="<?php echo BASE_URL ?>public/js/inputmask/bindings/inputmask.binding.js"></script>
 
-  <script src="<?php echo BASE_URL ?>public/js/deparqueo.js"></script>
+  <script src="<?php echo BASE_URL; ?>public/js/toastr/toastr.min.js" type="text/javascript"></script>
+
+  <script src="<?php echo BASE_URL ?>public/js/deparqueo.js?v=<?php echo(rand()); ?>"></script>
 
   <?php
     if (isset($_layoutParams['js']) && count($_layoutParams['js'])) {

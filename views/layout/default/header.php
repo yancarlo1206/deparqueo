@@ -23,6 +23,8 @@
   <link href="<?php echo BASE_URL ?>public/css/bootstrap-datepicker.css" rel="stylesheet">  
   <link href="<?php echo BASE_URL ?>public/css/bootstrap-select.css" rel="stylesheet">  
 
+  <link rel="stylesheet" href="<?php echo BASE_URL ?>public/css/toastr.css">
+
 </head>
 
 <body id="page-top">
@@ -61,10 +63,25 @@
       
       <?php foreach ($_layoutParams['menu'] as $key => $value) { ?>
         <li class="nav-item <?php if($_layoutParams['item'] == $value['id']){ echo "active";} ?>">
-        <a class="nav-link" href="<?php echo $value['enlace'] ?>">
-          <i class="fas fa-fw <?php echo $value['icono'] ?>"></i>
-          <span><?php echo $value['titulo'] ?></span></a>
-      </li>
+          <?php if($value['id'] == 'tarjeta'){ ?>
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCard" aria-expanded="true" aria-controls="collapseCard">
+          <?php }else{ ?>
+            <a class="nav-link" href="<?php echo $value['enlace'] ?>">
+          <?php } ?>
+              <i class="fas fa-fw <?php echo $value['icono'] ?>"></i>
+              <span><?php echo $value['titulo'] ?></span>
+            </a>
+            <?php if($value['id'] == 'tarjeta'){ ?>
+            <div id="collapseCard" class="collapse show" aria-labelledby="headingCard" data-parent="#accordionSidebar">
+              <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Lista de Tarjetas:</h6>
+                <a class="collapse-item" href="<?php echo BASE_URL ?>tarjeta">Todas</a>
+                <a class="collapse-item" href="<?php echo BASE_URL ?>tarjeta/vencidas">Vencidas</a>
+                <a class="collapse-item" href="<?php echo BASE_URL ?>tarjeta/inactivas">Inactivas</a>
+              </div>
+            </div>
+            <?php } ?>
+        </li>
       <?php } ?>
 
       <!-- Divider -->

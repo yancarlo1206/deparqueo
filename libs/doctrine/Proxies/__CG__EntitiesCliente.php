@@ -64,10 +64,10 @@ class Cliente extends \Entities\Cliente implements \Doctrine\ORM\Proxy\Proxy
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return array('__isInitialized__', 'id', 'documento', 'nombre', 'fechanacimiento', 'direccion', 'telefono', 'email', 'tipocliente', 'usuario');
+            return array('__isInitialized__', 'id', 'documento', 'nombre', 'fechanacimiento', 'direccion', 'telefono', 'email', 'observacion', 'tipocliente', 'usuario', 'tarjetas');
         }
 
-        return array('__isInitialized__', 'id', 'documento', 'nombre', 'fechanacimiento', 'direccion', 'telefono', 'email', 'tipocliente', 'usuario');
+        return array('__isInitialized__', 'id', 'documento', 'nombre', 'fechanacimiento', 'direccion', 'telefono', 'email', 'observacion', 'tipocliente', 'usuario', 'tarjetas');
     }
 
     /**
@@ -334,6 +334,28 @@ class Cliente extends \Entities\Cliente implements \Doctrine\ORM\Proxy\Proxy
     /**
      * {@inheritDoc}
      */
+    public function setObservacion($observacion)
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setObservacion', array($observacion));
+
+        return parent::setObservacion($observacion);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getObservacion()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getObservacion', array());
+
+        return parent::getObservacion();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function setTipocliente($tipocliente = NULL)
     {
 
@@ -373,6 +395,28 @@ class Cliente extends \Entities\Cliente implements \Doctrine\ORM\Proxy\Proxy
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getUsuario', array());
 
         return parent::getUsuario();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setTarjetas($tarjetas = NULL)
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setTarjetas', array($tarjetas));
+
+        return parent::setTarjetas($tarjetas);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getTarjetas()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getTarjetas', array());
+
+        return parent::getTarjetas();
     }
 
 }

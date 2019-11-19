@@ -112,6 +112,34 @@
 
 </div>
 
+<?php if(isset($this->dato) && count($this->dato->getTarjetas())){ ?>
+<div class="container-fluid">
+  <div class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">Tarjetas Asignadas</h6>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered" width="100%" cellspacing="0">
+          <thead>
+            <tr>
+              <th>Tarjeta</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach ($this->dato->getTarjetas() as $key => $value) { ?>
+            <tr>
+              <td><?php echo $value->getRfid(); ?></td>
+            </tr>
+            <?php } ?>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<?php } ?>
+
 <script>
 // Example starter JavaScript for disabling form submissions if there are invalid fields
 (function() {

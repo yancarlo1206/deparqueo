@@ -82,6 +82,11 @@ function __construct() {}
      */
     private $ingresoNormal;
 
+    /**
+     * @OneToMany(targetEntity="Ingresotarjeta", mappedBy="id")
+     */
+    private $ingresoTarjeta;
+
     /** 
      * Set id
      *
@@ -277,4 +282,17 @@ function __construct() {}
     {
         return $this->ingresoNormal;
     }
+
+    public function setIngresoTarjeta($ingresoTarjeta)
+    {
+        $this->ingresoTarjeta = $ingresoTarjeta;
+    
+        return $this;
+    }
+
+    public function getIngresoTarjeta()
+    {
+        return $this->ingresoTarjeta;
+    }
+    
 }

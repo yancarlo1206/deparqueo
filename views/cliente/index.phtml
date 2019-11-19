@@ -25,7 +25,7 @@
                     <th>Nombre</th>
                     <th>Telefono</th>
                     <th>Correo</th>
-                    <th>Tipp Cliente</th>
+                    <th>Tipo Cliente</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
@@ -35,7 +35,7 @@
                     <th>Nombre</th>
                     <th>Telefono</th>
                     <th>Correo</th>
-                    <th>Tipp Cliente</th>
+                    <th>Tipo Cliente</th>
                     <th>Acciones</th>
                   </tr>
                 </tfoot>
@@ -48,7 +48,19 @@
                     <td><?php echo $value->getEmail(); ?></td>
                     <td><?php echo $value->getTipocliente()->getDescripcion(); ?></td>
                     <td class="text-center">
-                      <a title="Actualizar" href="<?php echo BASE_URL.$this->_presentRequest->getControlador().'/'; ?>actualizar/<?php echo $value->getId(); ?>/"><i class="fas fa-edit"></i></a>
+                      <a 
+                          title="Actualizar" 
+                          href="<?php echo BASE_URL.$this->_presentRequest->getControlador().'/'; ?>actualizar/<?php echo $value->getId(); ?>/">
+                          <i class="fas fa-edit"></i></a>
+                      <a 
+                          title="Eliminar"
+                          style="cursor: pointer"
+                          onclick=
+                          "confirmarProcedimiento('<?php echo BASE_URL.$this->_presentRequest->getControlador().'/'; ?>eliminar/<?php echo $value->getId(); ?>/' ,
+                          'Por favor Confirmar para Eliminar el Cliente...')">
+                          <i class="fas fa-trash-alt"></i>
+                        </a>
+                      
                     </td>
                   </tr>
                   <?php } ?>

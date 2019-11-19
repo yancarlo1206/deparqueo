@@ -52,7 +52,7 @@ class usuarioController extends Controller {
 
     private function obj($new = true) {
         Session::accesoEstricto(array('ADMINISTRADOR'));
-        $arrayTexto = array('documento', 'nombre', 'fechaNacimiento','correo');
+        $arrayTexto = array('documento', 'nombre','correo');
         $arrayInt = array('rol');
         $rta = $this->validarArrays($arrayTexto, $arrayInt);
         if($rta){

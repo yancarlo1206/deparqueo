@@ -5,6 +5,7 @@ class tarjetaController extends Controller {
         parent::__construct();
         Session::accesoEstricto(array('AUXILIAR'));
         $this->_cliente = $this->loadModel("cliente");
+        $this->_tarifa = $this->loadModel("tarifa");
         $this->_tipoVehiculo = $this->loadModel("tipovehiculo");
         $this->_usuario = $this->loadModel("usuario");
     }
@@ -14,13 +15,15 @@ class tarjetaController extends Controller {
         $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' :: Listado';
         $this->_view->controlador = ucwords($this->_presentRequest->getControlador());
         $this->_view->datos = $this->_model->resultList();
+        $this->_view->text = "";
         $this->_view->renderizar('index', strtolower($this->_presentRequest->getControlador()));
     }
     
     public function agregar() {
         $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' :: Agregar';
         $this->_view->controlador = ucwords($this->_presentRequest->getControlador());
-	$this->_view->clientes = $this->_cliente->findBy(array(),array('nombre' => 'asc'));
+	    $this->_view->clientes = $this->_cliente->findBy(array(),array('nombre' => 'asc'));
+        $this->_view->tarifas = $this->_tarifa->findBy(array(),array('descripcion' => 'asc'));
         $this->_view->tipoVehiculos = $this->_tipoVehiculo->resultList();
         if($_POST){
             $this->_model = $this->loadModel($this->_presentRequest->getControlador());
@@ -34,7 +37,8 @@ class tarjetaController extends Controller {
         $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' :: Actualizar';
         $this->_view->miga = "Actualizar";
         $this->_view->controlador = ucwords($this->_presentRequest->getControlador());
-	$this->_view->clientes = $this->_cliente->findBy(array(),array('nombre' => 'asc'));
+	    $this->_view->clientes = $this->_cliente->findBy(array(),array('nombre' => 'asc'));
+        $this->_view->tarifas = $this->_tarifa->findBy(array(),array('descripcion' => 'asc'));
         $this->_view->tipoVehiculos = $this->_tipoVehiculo->resultList();
         /*if($this->filtrarInt($id)<1){
             Session::set('error','Registro No Encontrado.');
@@ -65,6 +69,7 @@ class tarjetaController extends Controller {
         $this->_model->getInstance()->setFechaFin(new \DateTime($this->getFecha($this->getTexto('fechaFin'))));
         $this->_model->getInstance()->setCliente($this->_cliente->get($this->getInt('cliente')));
         $this->_model->getInstance()->setTipoVehiculo($this->_tipoVehiculo->get($this->getInt('tipoVehiculo')));
+        $this->_model->getInstance()->setTarifa($this->_tarifa->get($this->getInt('tarifa')));
         $this->_model->getInstance()->setUsuarioActivo($this->_usuario->get(Session::get('codigo')));
         $this->_model->getInstance()->setEstado($this->getInt('estado'));
         if($new){
@@ -75,6 +80,26 @@ class tarjetaController extends Controller {
             Session::set('mensaje','Registro Actualizado con Exito.');
         }
         $this->redireccionar($this->_presentRequest->getControlador().'/');
+    }
+
+    public function vencidas() {
+        $this->_model = $this->loadModel($this->_presentRequest->getControlador());
+        $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' :: Listado';
+        $this->_view->controlador = ucwords($this->_presentRequest->getControlador());
+        $fecha = new \DateTime();
+        $this->_view->datos = $this->_model->dql("SELECT t FROM Entities\Tarjeta t WHERE t.fechafin <:fecha AND t.estado = 1",
+        array('fecha' => $fecha->format('Y-m-d')));
+        $this->_view->text = "Vencidas";
+        $this->_view->renderizar('index', strtolower($this->_presentRequest->getControlador()));
+    }
+
+    public function inactivas() {
+        $this->_model = $this->loadModel($this->_presentRequest->getControlador());
+        $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' :: Listado';
+        $this->_view->controlador = ucwords($this->_presentRequest->getControlador());
+        $this->_view->datos = $this->_model->findBy(array('estado' => 2));
+        $this->_view->text = "Inactivas";
+        $this->_view->renderizar('index', strtolower($this->_presentRequest->getControlador()));
     }
 
 }

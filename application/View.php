@@ -34,11 +34,17 @@ class View {
                     );
         }
         if(Session::accesoView('AUXILIAR')){
-             $menu[] = array(
+            $menu[] = array(
                     'id' => 'ticket',
                     'titulo' => 'Tickets',
                     'icono' => 'fa fa-ticket-alt',
                     'enlace' => BASE_URL . 'ticket/'
+                    );
+            $menu[] = array(
+                    'id' => 'operacion',
+                    'titulo' => 'Operaciones',
+                    'icono' => 'fas fa-check-double',
+                    'enlace' => BASE_URL . 'operacion/'
                     );
             $menu[] = array(
                     'id' => 'cliente',
@@ -50,7 +56,8 @@ class View {
                     'id' => 'tarjeta',
                     'titulo' => 'Tarjetas',
                     'icono' => 'fas fa-address-card',
-                    'enlace' => BASE_URL . 'tarjeta/'
+                    //'enlace' => BASE_URL . 'tarjeta/'
+                    'enlace' => '#'
                     );
              $menu[] = array(
                     'id' => 'tarifa',

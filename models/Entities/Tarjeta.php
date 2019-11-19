@@ -66,6 +66,16 @@ function __construct() {}
     private $tipovehiculo;
 
     /**
+     * @var \Tarifa
+     *
+     * @ManyToOne(targetEntity="Tarifa")
+     * @JoinColumns({
+     *   @JoinColumn(name="tarifa", referencedColumnName="id")
+     * })
+     */
+    private $tarifa;
+
+    /**
      * @var \Usuario
      *
      * @ManyToOne(targetEntity="Usuario")
@@ -212,6 +222,29 @@ function __construct() {}
     public function getTipovehiculo()
     {
         return $this->tipovehiculo;
+    }
+
+    /** 
+     * Set tarifa
+     *
+     * @param \Tarifa $tarifa
+     * @return Tarjeta
+     */
+    public function setTarifa($tarifa = null)
+    {
+        $this->tarifa = $tarifa;
+    
+        return $this;
+    }
+
+    /**
+     * Get tarifa
+     *
+     * @return \Tarifa 
+     */
+    public function getTarifa()
+    {
+        return $this->tarifa;
     }
 
     /** 

@@ -94,6 +94,11 @@ function __construct() {}
      */
     private $usuario;
 
+    /**
+     * @OneToMany(targetEntity="Tarjeta", mappedBy="cliente")
+     */
+    private $tarjetas;
+
 
     /** 
      * Set id
@@ -324,4 +329,17 @@ function __construct() {}
     {
         return $this->usuario;
     }
+
+    public function setTarjetas($tarjetas = null)
+    {
+        $this->tarjetas = $tarjetas;
+    
+        return $this;
+    }
+
+     public function getTarjetas()
+    {
+        return $this->tarjetas;
+    }
+    
 }

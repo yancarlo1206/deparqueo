@@ -59,7 +59,7 @@ class clienteController extends Controller {
         }
         $this->_model->getInstance()->setDocumento($this->getTexto('documento'));
         $this->_model->getInstance()->setNombre($this->getTexto('nombre'));
-	$this->_model->getInstance()->setFechaNacimiento(new \DateTime($this->getFecha($this->getTexto('fechaNacimiento'))));
+	    $this->_model->getInstance()->setFechaNacimiento(new \DateTime($this->getFecha($this->getTexto('fechaNacimiento'))));
         $this->_model->getInstance()->setDireccion($this->getTexto('direccion'));
         $this->_model->getInstance()->setObservacion($this->getTexto('observacion'));
         $this->_model->getInstance()->setTelefono($this->getTexto('telefono'));
@@ -72,6 +72,24 @@ class clienteController extends Controller {
         }else{
             $this->_model->update(); 
             Session::set('mensaje','Registro Actualizado con Exito.');
+        }
+        $this->redireccionar($this->_presentRequest->getControlador().'/');
+    }
+
+    public function eliminar($id=null){
+        $this->_cliente = $this->loadModel("cliente");
+        $this->_tarjeta = $this->loadModel("tarjeta");
+        $clente = $this->_cliente->get($id);
+        $tarjetas = $this->_tarjeta->findBy(array('cliente' => $id));
+        if(count($tarjetas)){
+            Session::set('error','El Cliente no se puede eliminar por tener una <b>Tarjeta Asignada</b>');
+            $this->redireccionar($this->_presentRequest->getControlador().'/');
+        }
+        try {
+            $this->_cliente->delete();
+            Session::set('mensaje','Se Elimin&oacute; Correctamente el Cliente');
+        } catch (Exception $e) {
+            Session::set('error','Error en el Proceso');
         }
         $this->redireccionar($this->_presentRequest->getControlador().'/');
     }
