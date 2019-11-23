@@ -91,6 +91,12 @@ class View {
                     'icono' => 'fa-money-bill-alt',
                     'enlace' => BASE_URL . 'pago/sancion/'
                     );
+            $menu[] = array(
+                    'id' => 'pagosotro',
+                    'titulo' => 'Pagos Otro',
+                    'icono' => 'fa-money-bill-alt',
+                    'enlace' => BASE_URL . 'pago/otro/'
+                    );
             $menuConfiguracion[] = array(
                     'id' => 'reporte',
                     'titulo' => 'Reportes',

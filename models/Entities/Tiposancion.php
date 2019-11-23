@@ -39,6 +39,13 @@ function __construct() {}
      */
     private $valor;
 
+    /**
+     * @var string
+     *
+     * @Column(name="otro", type="integer", nullable=true)
+     */
+    private $otro;
+
 
     /** 
      * Set id
@@ -108,4 +115,28 @@ function __construct() {}
     {
         return $this->valor;
     }
+
+    /** 
+     * Set otro
+     *
+     * @param string $otro
+     * @return Tiposancion
+     */
+    public function setOtro($otro)
+    {
+        $this->otro = $otro;
+    
+        return $this;
+    }
+
+    /**
+     * Get otro
+     *
+     * @return string 
+     */
+    public function getOtro()
+    {
+        return $this->otro;
+    }
+
 }

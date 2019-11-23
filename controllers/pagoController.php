@@ -342,7 +342,7 @@ class pagoController extends Controller {
             $fechaFin = $fecha->format('Y-m-d')." 23:59:59";
         }
         $this->_view->pagos = $this->_pago->dql(
-            "SELECT p FROM Entities\Pagosancion p WHERE p.fecha >=:fechaIni AND p.fecha <=:fechaFin order by p.fecha desc",
+            "SELECT p FROM Entities\Pagosancion p JOIN p.tiposancion ts WHERE p.fecha >=:fechaIni AND p.fecha <=:fechaFin AND ts.otro = 0 order by p.fecha desc",
            array('fechaIni' => $fechaIni, 'fechaFin' => $fechaFin)
         );
         $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' Sancion :: Listado';
@@ -382,12 +382,83 @@ class pagoController extends Controller {
             }
             $this->redireccionar('pago/registrarsancion/');
         }
-        $this->_view->tipoSanciones = $this->_tipoSancion->resultList();
+        $this->_view->tipoSanciones = $this->_tipoSancion->findBy(array('otro' => 0));
         $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' Sanci&oacute;n :: Registrar';
         $this->_view->renderizar('registrosancion', 'pagossancion');   
     }
 
     public function cargarPagoSancion(){
+        $tipoSancion = $this->getPostParam('tipoSancion');
+        $array = array();
+        $array['data'] = "ok";
+        if($tipoSancion){
+            $tipoSancion = $this->_tipoSancion->get($tipoSancion);
+            $array['totalPagar'] = $tipoSancion->getValor();
+        }else{
+            $array['totalPagar'] = "";
+        }
+        echo json_encode($array);
+    }
+
+    public function otro() {
+        Session::accesoEstricto(array('CAJERO'));
+        $fecha = new \DateTime();
+        $this->_view->fecha = $fecha->format('d/m/Y');
+        $fechaIni = $fecha->format('Y-m-d')." 00:00:00";
+        $fechaFin = $fecha->format('Y-m-d')." 23:59:59";
+        if($this->getPostParam('fecha')){
+            $fecha = new \DateTime($this->getFecha($this->getTexto('fecha')));
+            $this->_view->fecha = $fecha->format('d/m/Y');
+            $fechaIni = $fecha->format('Y-m-d')." 00:00:00";
+            $fechaFin = $fecha->format('Y-m-d')." 23:59:59";
+        }
+        $this->_view->pagos = $this->_pago->dql(
+            "SELECT p FROM Entities\Pagosancion p JOIN p.tiposancion ts WHERE p.fecha >=:fechaIni AND p.fecha <=:fechaFin AND ts.otro = 1 order by p.fecha desc",
+           array('fechaIni' => $fechaIni, 'fechaFin' => $fechaFin)
+        );
+        $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' Pagos Otro :: Listado';
+        $this->_view->renderizar('otro', 'pagosotro');
+    }
+
+    public function registrarotro(){
+        Session::accesoEstricto(array('CAJERO'));
+        if($this->getInt('guardar') == 1){
+            $this->_pago->getInstance()->setFecha(new \DateTime());
+            $documento = $this->getTexto('documento');
+            $totalPagar = $this->_tipoSancion->get($this->getTexto('tipoSancion'))->getValor();
+            $iva = $totalPagar * 0.19;
+            $valor = $totalPagar - $iva;
+            $this->_pago->getInstance()->setValor($valor);
+            $this->_pago->getInstance()->setIva($iva);
+            $this->_pago->getInstance()->setEntrego($this->getPostParam('recibidoNumero'));
+            $this->_pago->getInstance()->setCambio($this->getPostParam('devolverNumero'));
+            $this->_pago->getInstance()->setUsuario($this->_usuario->get(Session::get('codigo')));
+            $this->_pago->getInstance()->setCaja($this->_caja->get(1));
+            $this->_variable->get(1);
+            $consecutivo = $this->_variable->getInstance()->getValor();
+            $this->_pago->getInstance()->setFactura($consecutivo);
+            try {
+                $this->_pago->save();
+                $consecutivo = $consecutivo+1;
+                $this->_variable->getInstance()->setValor($consecutivo);
+                $this->_variable->update();
+                $this->_pagoSancion->getInstance()->setId($this->_pago->getInstance());
+                $this->_pagoSancion->getInstance()->setDocumento($documento);
+                $this->_pagoSancion->getInstance()->setFecha(new \DateTime());
+                $this->_pagoSancion->getInstance()->setTipoSancion($this->_tipoSancion->get($this->getTexto('tipoSancion')));
+                $this->_pagoSancion->save();
+                Session::set('mensaje','Registro de Pago Otro Correcto');
+            } catch (Exception $e) {
+                Session::set('error','Error en el Proceso');
+            }
+            $this->redireccionar('pago/otro/');
+        }
+        $this->_view->tipoSanciones = $this->_tipoSancion->findBy(array('otro' => 1));
+        $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' Sanci&oacute;n :: Registrar';
+        $this->_view->renderizar('registrootro', 'pagosotro');   
+    }
+
+    public function cargarPagoOtro(){
         $tipoSancion = $this->getPostParam('tipoSancion');
         $array = array();
         $array['data'] = "ok";
