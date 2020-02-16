@@ -1,0 +1,79 @@
+<div class="container-fluid">
+
+        <!-- Page Heading -->
+        <h1 class="h3 mb-2 text-gray-800">Listado de Pagos Otros</h1>
+        <!-- DataTales Example -->
+
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <div class="float-sm-right">
+              <a href="<?php echo BASE_URL ?>pago/registrarotro/" class="btn btn-primary btn-icon-split">
+                <span class="icon text-white-50">
+                  <i class="fas fa-check"></i>
+                </span>
+                <span class="text">Registrar Pago Otro</span>
+              </a>
+            </div>
+          </div>
+          <div class="card-body">
+            <form method="post">
+              <div class="input-group mb-3">
+                <input name="fecha" type="text" class="form-control datepicker" 
+                  autocomplete="off" 
+                  value="<?php echo $this->fecha; ?>" readonly >
+                <div class="input-group-append">
+                  <button class="btn btn-primary" type="submit">
+                    <span class="icon text-white-50">
+                      <i class="fas fa-arrow-right"></i>
+                    </span>
+                    | Buscar
+                  </button>
+                </div>
+              </div>
+            </form>
+            <div class="table-responsive">
+              <table class="table table-bordered" id="dataTableEsp" width="100%" cellspacing="0">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Fecha</th>
+                    <th>Documento</th>
+                    <th>Valor</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tfoot>
+                  <tr>
+                    <th>#</th>
+                    <th>Fecha</th>
+                    <th>Documento</th>
+                    <th>Valor</th>
+                    <th>Acciones</th>
+                  </tr>
+                </tfoot>
+                <tbody>
+                  <?php foreach ($this->pagos as $key => $value) { ?>
+                  <tr>
+                    <td><?php echo $key+1 ?></td>
+                    <td data-order="<?php echo $value->getFecha()->format("U") ?>"><?php echo $value->getFecha()->format('d/m/Y h:i:s a'); ?></td>
+                    <td><?php echo $value->getDocumento(); ?></td>
+                    <td><?php echo $value->getTipoSancion()->getDescripcion(); ?></td>
+                    <td style="text-align: center">
+                      <a
+                       title="Descargar Factura" 
+                       href="<?php echo BASE_URL.$this->_presentRequest->getControlador().'/'; ?>generarFacturaSancion/<?php echo $value->getId()->getId(); ?>/">
+                         <i class="fas fa-print"></i>
+                      </a>
+                    </td>
+                  </tr>
+                  <?php } ?>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+</div>

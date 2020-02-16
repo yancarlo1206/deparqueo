@@ -92,7 +92,8 @@ class ticketController extends Controller {
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','X-Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb2RpZ28iOiIwMDIwMyIsInRpcG8iOiJkb2NlbnRlIn0.oOf_khS-4ZBzyGomdKd2_QswKCS-w2aJNir4CGV5-iM'));
         $response = curl_exec($ch);
         curl_close($ch);
-        header("Location:http://192.168.0.150:8085/files/informes/".$response);
+        //header("Location:http://192.168.0.150:8085/files/informes/".$response);
+        header("Location:http://".$_SERVER['HTTP_HOST'].":8085/files/informes/".$response);
     }
 
 

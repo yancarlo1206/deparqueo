@@ -35,6 +35,12 @@ class View {
         }
         if(Session::accesoView('AUXILIAR')){
             $menu[] = array(
+                    'id' => 'inicio',
+                    'titulo' => 'DashBoard',
+                    'icono' => 'fas fa-fw fa-tachometer-alt',
+                    'enlace' => BASE_URL
+                    );
+            $menu[] = array(
                     'id' => 'ticket',
                     'titulo' => 'Tickets',
                     'icono' => 'fa fa-ticket-alt',
@@ -337,8 +343,11 @@ class View {
         $options = "";
         foreach ($objeto as $obj) {
             $options .= "<option title='" . $obj->$title() . "' value = '" . $obj->$value() . "'";
-            if ($obj->$value() == $selected)
+            if ($obj->$value() == $selected){
                 $options .= "selected>". $obj->$texto() . "</option>";
+            }else if($name == "tarjetaRfid"){
+                $options .= ">" . $obj->$texto() . "-" . $obj->getCliente()->getNombre() . "</option>";
+            }
             else
                 $options .= ">" . $obj->$texto() . "</option>";
         }

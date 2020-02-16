@@ -25,6 +25,8 @@
 
   <link rel="stylesheet" href="<?php echo BASE_URL ?>public/css/toastr.css">
 
+  <script>var BASE={url:'<?php echo BASE_URL; ?>', url_server:'<?php echo $_SERVER['HTTP_HOST']; ?>'};</script>
+
 </head>
 
 <body id="page-top">
@@ -78,6 +80,7 @@
                 <a class="collapse-item" href="<?php echo BASE_URL ?>tarjeta">Todas</a>
                 <a class="collapse-item" href="<?php echo BASE_URL ?>tarjeta/vencidas">Vencidas</a>
                 <a class="collapse-item" href="<?php echo BASE_URL ?>tarjeta/inactivas">Inactivas</a>
+                <a class="collapse-item" href="<?php echo BASE_URL ?>busqueda/">Pagos</a>
               </div>
             </div>
             <?php } ?>

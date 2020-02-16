@@ -8,6 +8,7 @@ class operacionController extends Controller {
         $this->_tarjeta = $this->loadModel('tarjeta');
         $this->_usuario = $this->loadModel('usuario');
         $this->_variable = $this->loadModel('variable');
+        $this->_configuracion = $this->loadModel('configuracion');
         $this->_view->setJs(array('validar'));
     }
     
@@ -32,6 +33,27 @@ class operacionController extends Controller {
         $this->_ingreso->getInstance()->setFechaSalida(new \DateTime());
         $this->_ingreso->update();
         Session::set('mensaje','Se Registr&oacute; la Salida de la Tarjeta');
+        $this->redireccionar('operacion');
+    }
+
+    public function abrirTalanquera($tipo=null){
+        $entrada = $this->_configuracion->get(1);
+        $salida = $this->_configuracion->get(2);
+        if($tipo == 1){
+            $ch = curl_init("http://".$entrada->getValor().":8080");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+            curl_exec($ch);
+            curl_close($ch);
+            Session::set('mensaje','La Talanquera de Entrada se Abri&oacute; Correctamente');
+        }else{
+            $ch = curl_init("http://".$salida->getValor().":8080");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+            curl_exec($ch);
+            curl_close($ch);
+            Session::set('mensaje','La Talanquera de Salida se Abri&oacute; Correctamente');
+        }
         $this->redireccionar('operacion');
     }
 

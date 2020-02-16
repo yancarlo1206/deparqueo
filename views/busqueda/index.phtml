@@ -1,0 +1,122 @@
+<div class="container-fluid">
+
+  <div class="card shadow mb-4">
+  <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">Busqueda de Pagos</h6>
+  </div>
+    <div class="card-body">
+      <form class="needs-validation" novalidate method="post"> 
+        <input type="hidden" name="buscar" value="1">
+
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label>Fecha Inicio</label>
+            <input 
+              name="fechaIni" 
+              type="text" 
+              class="form-control datepicker" 
+              data-date-format="dd/mm/yyyy"
+              autocomplete="off"
+              value="<?php if(isset($this->fechaIni)) echo $this->fechaIni; ?>" 
+              required >
+          </div>
+
+          <div class="form-group col-md-6">
+            <label>Fecha Fin</label>
+            <input 
+              name="fechaFin" 
+              type="text" 
+              class="form-control datepicker" 
+              data-date-format="dd/mm/yyyy"
+              autocomplete="off"
+              value="<?php if(isset($this->fechaFin)) echo $this->fechaFin; ?>" 
+              required >
+          </div>
+          
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-12">
+            <label>Tarjeta</label>
+            <?php $tarjeta = ""; ?>
+            <?php if(isset($this->tarjeta)) $tarjeta = $this->tarjeta; ?>
+            <?php echo $this->combobox("tarjetaRfid", "Seleccione...", $this->tarjetas, $tarjeta, "getRfid", "getRfid", "class='form-control show-tick' data-live-search='true' required","getRfid"); ?>
+          </div>
+        </div>
+
+        <div class="float-right">
+          <button type="submit" class="btn btn-primary" >Realizar Busqueda</button> 
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<?php if(isset($this->pagos)){ ?>
+<div class="container-fluid">
+
+  <div class="card shadow mb-4">
+  <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">Resultado</h6>
+  </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered" id="dataTableEsp" width="100%" cellspacing="0">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Fecha</th>
+              <th>Ticket</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tfoot>
+            <tr>
+              <th>#</th>
+              <th>Fecha</th>
+              <th>Ticket</th>
+              <th>Acciones</th>
+            </tr>
+          </tfoot>
+          <tbody>
+            <?php foreach ($this->pagos as $key => $value) { ?>
+            <tr>
+              <td><?php echo $key+1; ?></td>
+              <td data-order="<?php echo $value['fecha']->format("U") ?>"><?php echo $value['fecha']->format('d/m/Y h:i:s a'); ?></td>
+              <td><?php echo "$".number_format($value['total']); ?></td>
+              <td style="text-align: center">
+
+              </td>
+            </tr>
+            <?php } ?>
+          </tbody>
+        </table>
+      </div>
+      <?php } ?>
+    </div>
+  </div>
+
+</div>
+
+</div>
+
+<script>
+// Example starter JavaScript for disabling form submissions if there are invalid fields
+(function() {
+  'use strict';
+  window.addEventListener('load', function() {
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    var forms = document.getElementsByClassName('needs-validation');
+    // Loop over them and prevent submission
+    var validation = Array.prototype.filter.call(forms, function(form) {
+      form.addEventListener('submit', function(event) {
+        if (form.checkValidity() === false) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  }, false);
+})();
+</script>

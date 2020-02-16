@@ -1,1 +1,257 @@
+<div class="container-fluid">
+
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+  </div>
+
+  <div class="row">
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-primary shadow">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Tarjetas Propietarios</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo count($this->tarjetasPropietarios); ?></div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-calendar fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-primary shadow">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Tarjetas Inquilinos</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo count($this->tarjetasParticulares); ?></div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-calendar fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-primary shadow">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Tarjetas Totales</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">
+                <?php echo count($this->tarjetasPropietarios) + count($this->tarjetasParticulares); ?>
+                  
+                </div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-calendar fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-primary shadow">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Tarjetas Parqueadero</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo count($this->tarjetasParqueadero); ?></div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-calendar fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-warning shadow">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Ticket Activos</div>
+              <div class="row no-gutters align-items-center">
+                <div class="col-auto">
+                  <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"><?php echo count($this->ticketActivos) ?></div>
+                </div>
+                <div class="col">
+                  <div class="progress progress-sm mr-2">
+                    <div class="progress-bar bg-warning" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-warning shadow">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Ticket Salida</div>
+              <div class="row no-gutters align-items-center">
+                <div class="col-auto">
+                  <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"><?php echo count($this->ticketSalidas) ?></div>
+                </div>
+                <div class="col">
+                  <div class="progress progress-sm mr-2">
+                    <div class="progress-bar bg-warning" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-warning shadow">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Ticket Totales</div>
+              <div class="row no-gutters align-items-center">
+                <div class="col-auto">
+                  <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"><?php echo count($this->ticketActivos)+  count($this->ticketSalidas) ?></div>
+                </div>
+                <div class="col">
+                  <div class="progress progress-sm mr-2">
+                    <div class="progress-bar bg-warning" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+    </div>
+
+    <?php $valorTotal = 0; ?>
+    <?php $valorTicket = 0; ?>
+    <?php $valorMensualidad = 0; ?>
+    <?php $valorSancion = 0; ?>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-success shadow">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Recaudo Ticket</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">
+                <?php if(isset($this->recaudoTicket[0])){ ?>
+                	<?php foreach ($this->recaudoTicket as $key => $value) {
+                		$valorTicket += $value['total'];
+                	} ?>
+                  <?php $valorTotal += $valorTicket; ?>
+                  <?php echo "$ ".number_format($valorTicket); ?>
+                <?php }else{ ?>
+                  $ 0
+                <?php } ?>
+                </div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-success shadow">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Recaudo Mensualidad</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">
+                <?php if(isset($this->recaudoMensualidad[0])){ ?>
+                	<?php foreach ($this->recaudoMensualidad as $key => $value) {
+                		$valorMensualidad += $value['total'];
+                	} ?>
+                  <?php $valorTotal += $valorMensualidad; ?>
+                  <?php echo "$ ".number_format($valorMensualidad); ?>
+                <?php }else{ ?>
+                  $ 0
+                <?php } ?>
+                </div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-success shadow">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Recaudo Otros</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">
+                <?php if(isset($this->recaudoSancion[0])){ ?>
+                	<?php foreach ($this->recaudoSancion as $key => $value) {
+                		$valorSancion += $value['total'];
+                	} ?>
+                  <?php $valorTotal += $valorSancion; ?>
+                  <?php echo "$ ".number_format($valorSancion); ?>
+                <?php }else{ ?>
+                  $ 0
+                <?php } ?>
+                </div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-success shadow">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Recaudo Total</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">
+                  <?php echo "$ ".number_format($valorTotal); ?>
+                </div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  </div>
 </div>

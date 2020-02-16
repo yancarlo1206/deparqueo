@@ -1,17 +1,17 @@
 <?php
 
 
-/* Date: 04/10/2019 21:05:10 */
+/* Date: 17/06/2019 21:52:50 */
 
 namespace Entities;
 
 /**
- * Tiposancion
+ * Variable
  *
- * @Table(name="tiposancion")
+ * @Table(name="configuracion")
  * @Entity
  */
-class Tiposancion
+class Configuracion
 {
 
 function __construct() {}
@@ -28,30 +28,23 @@ function __construct() {}
     /**
      * @var string
      *
-     * @Column(name="descripcion", type="string", length=100, nullable=true)
+     * @Column(name="descripcion", type="string", length=50, nullable=true)
      */
     private $descripcion;
 
     /**
      * @var string
      *
-     * @Column(name="valor", type="decimal", precision=9, scale=0, nullable=true)
+     * @Column(name="valor", type="string", length=500, nullable=true)
      */
     private $valor;
-
-    /**
-     * @var string
-     *
-     * @Column(name="otro", type="integer", nullable=true)
-     */
-    private $otro;
 
 
     /** 
      * Set id
      *
      * @param integer $id
-     * @return Tiposancion
+     * @return Variable
      */
     public function setId($id)
     {
@@ -74,7 +67,7 @@ function __construct() {}
      * Set descripcion
      *
      * @param string $descripcion
-     * @return Tiposancion
+     * @return Variable
      */
     public function setDescripcion($descripcion)
     {
@@ -97,7 +90,7 @@ function __construct() {}
      * Set valor
      *
      * @param string $valor
-     * @return Tiposancion
+     * @return Valor
      */
     public function setValor($valor)
     {
@@ -115,28 +108,4 @@ function __construct() {}
     {
         return $this->valor;
     }
-
-    /** 
-     * Set otro
-     *
-     * @param string $otro
-     * @return Tiposancion
-     */
-    public function setOtro($otro)
-    {
-        $this->otro = $otro;
-    
-        return $this;
-    }
-
-    /**
-     * Get otro
-     *
-     * @return string 
-     */
-    public function getOtro()
-    {
-        return $this->otro;
-    }
-    
 }

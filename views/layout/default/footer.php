@@ -64,6 +64,7 @@
   <script src="<?php echo BASE_URL; ?>public/js/toastr/toastr.min.js" type="text/javascript"></script>
 
   <script src="<?php echo BASE_URL ?>public/js/deparqueo.js?v=<?php echo(rand()); ?>"></script>
+  
 
   <?php
     if (isset($_layoutParams['js']) && count($_layoutParams['js'])) {
@@ -77,7 +78,6 @@
       }
     }
   ?>
-  <script>var BASE={url:'<?php echo BASE_URL; ?>'};</script>
 
 </body>
 

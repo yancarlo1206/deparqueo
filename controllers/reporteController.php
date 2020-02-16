@@ -30,6 +30,7 @@ class reporteController extends Controller {
             }
 
             $ch = curl_init("http://192.168.0.150:8086/pdf/1/".$reporte);
+            //$ch = curl_init("http://".$_SERVER['HTTP_HOST'].":8086/pdf/1/".$reporte);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
             curl_setopt($ch, CURLOPT_POSTFIELDS,json_encode($data));
@@ -38,7 +39,7 @@ class reporteController extends Controller {
             var_dump(curl_error($ch));
             var_dump(curl_errno($ch));
             curl_close($ch);
-            header("Location:http://192.168.0.150:8085/files/informes/".$response);
+            header("Location:http://".$_SERVER['HTTP_HOST'].":8085/files/informes/".$response);
         }
         $this->_view->fecha = (new \DateTime())->format('d/m/Y');
         $this->_view->titulo = "Reportes";

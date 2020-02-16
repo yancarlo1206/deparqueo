@@ -1,27 +1,15 @@
 <?php
 
-class pagoController extends Controller {   
+class busquedaController extends Controller {   
     public function __construct() {
         parent::__construct();
-        $this->_ingreso = $this->loadModel('ingreso');
-        $this->_ingresoNormal = $this->loadModel('ingresonormal');
-
         $this->_pago = $this->loadModel('pago');
         $this->_pagoServicio = $this->loadModel('pagoservicio');
-        $this->_ingreso = $this->loadModel('ingreso');
-
-        $this->_tarjeta = $this->loadModel('tarjeta');
         $this->_pagoMensual = $this->loadModel('pagomensual');
-
-        $this->_tarifa = $this->loadModel('tarifa');
-        $this->_tipoTarifa = $this->loadModel('tipotarifa');
-
         $this->_pagoSancion = $this->loadModel('pagosancion');
+        $this->_tarjeta = $this->loadModel('tarjeta');
         $this->_tipoSancion = $this->loadModel('tiposancion');
-
-        $this->_usuario = $this->loadModel('usuario');
-        $this->_caja = $this->loadModel('caja');
-
+        $this->_cliente = $this->loadModel('cliente');
         $this->_variable = $this->loadModel('variable');
         $this->_configuracion = $this->loadModel('configuracion');
 
@@ -29,26 +17,28 @@ class pagoController extends Controller {
     }
     
     public function index() {
-        Session::accesoEstricto(array('CAJERO'));
-        $fecha = new \DateTime();
-        $fechaIni = $fecha->format('Y-m-d')." 00:00:00";
-        $fechaFin = $fecha->format('Y-m-d')." 23:59:59";
-        $this->_view->fecha = $fecha->format('d/m/Y');
-        if($this->getPostParam('fecha')){
-            $fecha = new \DateTime($this->getFecha($this->getTexto('fecha')));
-            $this->_view->fecha = $fecha->format('d/m/Y');
-            $fechaIni = $fecha->format('Y-m-d')." 00:00:00";
-            $fechaFin = $fecha->format('Y-m-d')." 23:59:59";
+        if($this->getInt('buscar') == 1){
+            $tarjeta = $this->getPostParam('tarjetaRfid');
+            $fechaIniDato = new \DateTime($this->getFecha($this->getTexto('fechaIni')));
+            $fechaFinDato = new \DateTime($this->getFecha($this->getTexto('fechaFin')));
+            $fechaIni = $fechaIniDato->format('Y-m-d')." 00:00:00";
+            $fechaFin = $fechaFinDato->format('Y-m-d')." 23:59:59";
+        	$this->_view->pagos = $this->_pago->dql(
+                "SELECT p.fecha, sum(p.valor+p.iva) as total FROM Entities\Pago p 
+                INNER JOIN Entities\PagoMensual pm WITH pm.id = p.id
+                WHERE p.fecha >=:fechaIni AND p.fecha <=:fechaFin AND pm.tarjeta =:tarjeta
+                GROUP BY p.ingreso, p.fecha order by p.fecha desc",
+               array('fechaIni' => $fechaIni, 'fechaFin' => $fechaFin, 'tarjeta' => $tarjeta)
+            );
+            $this->_view->fechaIni = $fechaIniDato->format('d/m/Y');
+            $this->_view->fechaFin = $fechaFinDato->format('d/m/Y');
+            $this->_view->tarjeta = $tarjeta;
         }
-    	$this->_view->pagos = $this->_pago->dql(
-            "SELECT p.fecha, i.numero, sum(p.valor+p.iva) as total FROM Entities\Pago p 
-            INNER JOIN Entities\Ingreso i WITH i.id = p.ingreso
-            WHERE p.fecha >=:fechaIni AND p.fecha <=:fechaFin AND p.ingreso is not null
-            GROUP BY p.ingreso order by p.fecha desc",
-           array('fechaIni' => $fechaIni, 'fechaFin' => $fechaFin)
-        );
-    	$this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' :: Listado';
-        $this->_view->renderizar('index', 'pagos');
+        //$this->_view->fecha = $fecha->format('d/m/Y');
+        $this->_view->tarjetas = $this->_tarjeta->dql("SELECT t from Entities\Tarjeta t 
+            inner join Entities\Cliente c with t.cliente =  c.id where t.estado = 1 order by c.nombre asc");
+    	$this->_view->titulo = ucwords('Busqueda de Pagos');
+        $this->_view->renderizar('index', 'busqueda');
     }
 
     public function registrar(){
@@ -522,8 +512,7 @@ class pagoController extends Controller {
         if($automatico){
             return true;
         }else{
-            //header("Location:http://192.168.0.150:8085/files/informes/".$response);
-            header("Location:http://".$_SERVER['HTTP_HOST'].":8085/files/informes/".$response);
+            header("Location:http://192.168.0.150:8085/files/informes/".$response);
         }
     }
 
@@ -559,8 +548,7 @@ class pagoController extends Controller {
         if($automatico){
             return true;
         }else{
-            //header("Location:http://192.168.0.150:8085/files/informes/".$response);
-            header("Location:http://".$_SERVER['HTTP_HOST'].":8085/files/informes/".$response);
+            header("Location:http://192.168.0.150:8085/files/informes/".$response);
         }
     }
 
@@ -594,8 +582,7 @@ class pagoController extends Controller {
         if($automatico){
             return true;
         }else{
-            //header("Location:http://192.168.0.150:8085/files/informes/".$response);
-            header("Location:http://".$_SERVER['HTTP_HOST'].":8085/files/informes/".$response);
+            header("Location:http://192.168.0.150:8085/files/informes/".$response);
         }
     }
 
@@ -611,8 +598,7 @@ class pagoController extends Controller {
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','X-Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb2RpZ28iOiIwMDIwMyIsInRpcG8iOiJkb2NlbnRlIn0.oOf_khS-4ZBzyGomdKd2_QswKCS-w2aJNir4CGV5-iM'));
         $response = curl_exec($ch);
         curl_close($ch);
-        //header("Location:http://192.168.0.150:8085/files/informes/".$response);
-        header("Location:http://".$_SERVER['HTTP_HOST'].":8085/files/informes/".$response);
+        header("Location:http://192.168.0.150:8085/files/informes/".$response);
     }
 
     public function reporteDia(){
@@ -625,8 +611,7 @@ class pagoController extends Controller {
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','X-Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb2RpZ28iOiIwMDIwMyIsInRpcG8iOiJkb2NlbnRlIn0.oOf_khS-4ZBzyGomdKd2_QswKCS-w2aJNir4CGV5-iM'));
         $response = curl_exec($ch);
         curl_close($ch);
-        //header("Location:http://192.168.0.150:8085/files/informes/".$response);
-        header("Location:http://".$_SERVER['HTTP_HOST'].":8085/files/informes/".$response);
+        header("Location:http://192.168.0.150:8085/files/informes/".$response);
     }
 
 }

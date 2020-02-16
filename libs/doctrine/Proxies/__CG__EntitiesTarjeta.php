@@ -64,10 +64,10 @@ class Tarjeta extends \Entities\Tarjeta implements \Doctrine\ORM\Proxy\Proxy
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return array('__isInitialized__', 'rfid', 'estado', 'fechainicio', 'fechafin', 'cliente', 'tipovehiculo', 'usuarioactivo');
+            return array('__isInitialized__', 'rfid', 'estado', 'fechainicio', 'fechafin', 'cliente', 'tipovehiculo', 'tarifa', 'usuarioactivo');
         }
 
-        return array('__isInitialized__', 'rfid', 'estado', 'fechainicio', 'fechafin', 'cliente', 'tipovehiculo', 'usuarioactivo');
+        return array('__isInitialized__', 'rfid', 'estado', 'fechainicio', 'fechafin', 'cliente', 'tipovehiculo', 'tarifa', 'usuarioactivo');
     }
 
     /**
@@ -307,6 +307,28 @@ class Tarjeta extends \Entities\Tarjeta implements \Doctrine\ORM\Proxy\Proxy
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getTipovehiculo', array());
 
         return parent::getTipovehiculo();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setTarifa($tarifa = NULL)
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setTarifa', array($tarifa));
+
+        return parent::setTarifa($tarifa);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getTarifa()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getTarifa', array());
+
+        return parent::getTarifa();
     }
 
     /**

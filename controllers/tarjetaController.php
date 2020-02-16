@@ -14,7 +14,8 @@ class tarjetaController extends Controller {
         $this->_model = $this->loadModel($this->_presentRequest->getControlador());
         $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' :: Listado';
         $this->_view->controlador = ucwords($this->_presentRequest->getControlador());
-        $this->_view->datos = $this->_model->resultList();
+        //$this->_view->datos = $this->_model->resultList();
+        $this->_view->datos = $this->_model->findBy(array('estado' => 1));
         $this->_view->text = "";
         $this->_view->renderizar('index', strtolower($this->_presentRequest->getControlador()));
     }
