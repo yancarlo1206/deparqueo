@@ -94,7 +94,7 @@ class Session
         }
         Session::tiempo();
         if($noAdmin == false){
-            if(Session::get('level') == 'ADMINISTRADOR'){
+            if(Session::get('level') == 'admin'){
                 return;
             }
         }

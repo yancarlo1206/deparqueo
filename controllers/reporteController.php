@@ -25,6 +25,8 @@ class reporteController extends Controller {
                 $reporte = 'reporteInformacionTarjetas';
             }elseif($this->getInt('reporte') == 4){
                 $reporte = 'reportePagoMensualidad';
+            }elseif($this->getInt('reporte') == 5){
+                $reporte = 'reporteFechaCorteTarjeta';
             }elseif($this->getInt('reporte') == 10){
                 $this->archivoCsv($fechaIni, $fechaFin);
             }

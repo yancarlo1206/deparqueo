@@ -28,7 +28,6 @@ abstract class Controller {
 
   protected function getLibrary($libreria) {
     $rutaLibreria = LIBS_PATH. $libreria . '.php';
-    echo $rutaLibreria;
     if(is_readable($rutaLibreria)){
       require_once $rutaLibreria;
     }
@@ -417,9 +416,9 @@ function arrayVacuum($array='') {
     } else {
         return false;
     }
-  }
+    }
 
-  public function mensajeTexto($numero=null, $sms=null){
+    public function mensajeTexto($numero=null, $sms=null){
       $url = 'https://api.hablame.co/sms/envio/';
       $data = array(
         'cliente' => 10010722, //Numero de cliente

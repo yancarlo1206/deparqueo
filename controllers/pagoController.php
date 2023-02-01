@@ -13,6 +13,8 @@ class pagoController extends Controller {
         $this->_tarjeta = $this->loadModel('tarjeta');
         $this->_pagoMensual = $this->loadModel('pagomensual');
 
+        $this->_pagoSinIva = $this->loadModel('pagosiniva');        
+
         $this->_tarifa = $this->loadModel('tarifa');
         $this->_tipoTarifa = $this->loadModel('tipotarifa');
 
@@ -247,6 +249,10 @@ class pagoController extends Controller {
             "SELECT p FROM Entities\Pagomensual p WHERE p.fecha =:fecha order by p.fecharegistro desc",
            array('fecha' => $fecha)
         );
+        $this->_view->pagoSinIva = $this->_pagoSinIva->dql(
+            "SELECT p FROM Entities\Pagosiniva p WHERE p.fecha =:fecha order by p.fecharegistro desc",
+           array('fecha' => $fecha)
+        );
         $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' Mensual :: Listado';
         $this->_view->renderizar('mensual', 'pagosmensual');
     }
@@ -254,6 +260,10 @@ class pagoController extends Controller {
     public function registrarmensual(){
         Session::accesoEstricto(array('CAJERO'));
         if($this->getInt('guardar') == 1){
+            $tarjeta = $this->_tarjeta->get($this->getPostParam('tarjeta'));
+            if($tarjeta->getCliente()->getTipoCliente()->getId() == 1){
+                $this->pagosiniva($this->getPostParam('tarjeta'), $this->getPostParam('totalPagarNumero'));                
+            }
             $this->_pago->getInstance()->setFecha(new \DateTime());
             $totalPagar = $this->getPostParam('totalPagarNumero');
             $iva = $totalPagar * 0.19;
@@ -292,6 +302,28 @@ class pagoController extends Controller {
         }
         $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' Mensual :: Registrar';
         $this->_view->renderizar('registromensual', 'pagosmensual');   
+    }
+
+    public function pagosiniva($tarjeta=null, $totalPagar = 0){
+        $this->_variable->get(3);
+        $consecutivo = $this->_variable->getInstance()->getValor();
+        $consecutivo = $consecutivo+1;
+        $this->_variable->getInstance()->setValor($consecutivo);
+        $this->_variable->update();
+        $this->_pagoSinIva->getInstance()->setTarjeta($this->_tarjeta->get($tarjeta));
+        $this->_pagoSinIva->getInstance()->setValor($totalPagar);
+        $this->_pagoSinIva->getInstance()->setFactura($consecutivo);
+        $this->_pagoSinIva->getInstance()->setFecha(new \DateTime());
+        $this->_pagoSinIva->getInstance()->setFechaRegistro(new \DateTime());
+        $this->_pagoSinIva->save();
+        $fechaTarjeta = $this->_tarjeta->getInstance()->getFechaFin();
+        $fechaTarjeta = $fechaTarjeta->format('d-m-Y');
+        $newDate = date("d-m-Y",strtotime($fechaTarjeta."+ 1 month"));
+        $this->_tarjeta->getInstance()->setFechaFin(new \DateTime($newDate));
+        $this->_tarjeta->update();
+        $this->generarFacturaMensualSinIva($this->_pagoSinIva->getInstance()->getId(), true);
+        Session::set('mensaje','Registro de Pago Mensual Correcto');
+        $this->redireccionar('pago/registrarmensual/');
     }
 
     public function cargarPagoMensual(){
@@ -356,7 +388,7 @@ class pagoController extends Controller {
         Session::accesoEstricto(array('CAJERO'));
         if($this->getInt('guardar') == 1){
             $this->_pago->getInstance()->setFecha(new \DateTime());
-            $documento = $this->getTexto('documento');
+            $documento = $this->getPostParam('documento');
             $totalPagar = $this->_tipoSancion->get($this->getTexto('tipoSancion'))->getValor();
             $iva = $totalPagar * 0.19;
             $valor = $totalPagar - $iva;
@@ -544,6 +576,42 @@ class pagoController extends Controller {
         "entrego" => "".$pago->getEntrego(),
         "cambio" => "".$pago->getCambio(),
         "subtotal" => "".$pago->getValor());
+        if($automatico){
+            $impresion = $this->_configuracion->get(3);
+            $ch = curl_init("http://".$impresion->getValor().":8090/reporte/imprimir/facturao_210");
+        }else{
+           $ch = curl_init("http://192.168.0.150:8086/pdf/0/facturao_210");
+        }
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS,json_encode($data));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','X-Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb2RpZ28iOiIwMDIwMyIsInRpcG8iOiJkb2NlbnRlIn0.oOf_khS-4ZBzyGomdKd2_QswKCS-w2aJNir4CGV5-iM'));
+        $response = curl_exec($ch);
+        curl_close($ch);
+        if($automatico){
+            return true;
+        }else{
+            //header("Location:http://192.168.0.150:8085/files/informes/".$response);
+            header("Location:http://".$_SERVER['HTTP_HOST'].":8085/files/informes/".$response);
+        }
+    }
+
+    public function generarFacturaMensualSinIva($pago=null, $automatico=false){
+        $pagoSinIva = $this->_pagoSinIva->findByObject(array('id' => $pago));
+        $cliente = $pagoSinIva->getTarjeta()->getCliente()->getDocumento();
+        $placa = $pagoSinIva->getTarjeta()->getCliente()->getObservacion();
+        $tipoVehiculo = $pagoSinIva->getTarjeta()->getTipoVehiculo()->getDescripcion();
+        $data = array(
+        "facturaventa" => $pagoSinIva->getFactura(),
+        "fecha" => $pagoSinIva->getFecha()->format('d/m/Y'),
+        "concepto" => "Mensualidad ".$tipoVehiculo,
+        "cliente" => $cliente,
+        "placa" => $placa,
+        "iva" => "0",
+        "valortotal" => "".($pagoSinIva->getValor()),
+        "entrego" => "0",
+        "cambio" => "0",
+        "subtotal" => "".$pagoSinIva->getValor());
         if($automatico){
             $impresion = $this->_configuracion->get(3);
             $ch = curl_init("http://".$impresion->getValor().":8090/reporte/imprimir/facturao_210");

@@ -12,7 +12,7 @@ class Doctrine {
 			require_once 'Doctrine/Common/ClassLoader.php';
 			$classLoader = new \Doctrine\Common\ClassLoader('Doctrine');
 			$classLoader->register();
-			$classLoader = new \Doctrine\Common\ClassLoader('Entities', __DIR__."\..\..\models");
+			$classLoader = new \Doctrine\Common\ClassLoader('Entities', __DIR__."/../../models");
 			$classLoader->register();
 			$classLoader = new \Doctrine\Common\ClassLoader('Proxies', __DIR__);
 			$classLoader->register();

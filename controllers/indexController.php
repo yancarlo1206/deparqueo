@@ -36,9 +36,9 @@ class indexController extends Controller {
             JOIN c.tipocliente tc WHERE tc.id =:cliente AND t.estado = 1", array("cliente" => 2));
         $this->_view->tarjetasParqueadero = $this->_ingreso->dql("SELECT i FROM Entities\Ingreso i INNER JOIN Entities\Ingresotarjeta it WITH i.id = it.id WHERE i.fecha =:fecha", 
             array("fecha" => $fecha->format('Y-m-d')));
-        $this->_view->ticketActivos = $this->_ingreso->dql("SELECT i FROM Entities\Ingreso i INNER JOIN Entities\IngresoNormal ino WITH i.id = ino.id WHERE i.fecha =:fecha and i.fechasalida is null", 
+        $this->_view->ticketActivos = $this->_ingreso->dql("SELECT i FROM Entities\Ingreso i INNER JOIN Entities\Ingresonormal ino WITH i.id = ino.id WHERE i.fecha =:fecha and i.fechasalida is null", 
             array("fecha" => $fecha->format('Y-m-d')));
-        $this->_view->ticketSalidas = $this->_ingreso->dql("SELECT i FROM Entities\Ingreso i INNER JOIN Entities\IngresoNormal ino WITH i.id = ino.id WHERE i.fecha =:fecha and i.fechasalida is not null", 
+        $this->_view->ticketSalidas = $this->_ingreso->dql("SELECT i FROM Entities\Ingreso i INNER JOIN Entities\Ingresonormal ino WITH i.id = ino.id WHERE i.fecha =:fecha and i.fechasalida is not null", 
             array("fecha" => $fecha->format('Y-m-d')));
         $fechaIni = $fecha->format('Y-m-d')." 00:00:00";
         $fechaFin = $fecha->format('Y-m-d')." 23:59:59";

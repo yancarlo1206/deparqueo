@@ -36,17 +36,17 @@ class View {
         if(Session::accesoView('AUXILIAR')){
             $menu[] = array(
                     'id' => 'inicio',
-                    'titulo' => 'DashBoard',
+                    'titulo' => 'Panel Estado',
                     'icono' => 'fas fa-fw fa-tachometer-alt',
                     'enlace' => BASE_URL
                     );
-            $menu[] = array(
+             $menu[] = array(
                     'id' => 'ticket',
                     'titulo' => 'Tickets',
                     'icono' => 'fa fa-ticket-alt',
                     'enlace' => BASE_URL . 'ticket/'
                     );
-            $menu[] = array(
+             $menu[] = array(
                     'id' => 'operacion',
                     'titulo' => 'Operaciones',
                     'icono' => 'fas fa-check-double',
@@ -77,8 +77,15 @@ class View {
                     'icono' => 'fas fa-print',
                     'enlace' => BASE_URL . 'reporte/'
                     );
+
         }
         if(Session::accesoView('CAJERO')){
+            $menu[] = array(
+                    'id' => 'inicio',
+                    'titulo' => 'Panel Estado',
+                    'icono' => 'fas fa-fw fa-tachometer-alt',
+                    'enlace' => BASE_URL
+                    );
             $menu[] = array(
                     'id' => 'pagos',
                     'titulo' => 'Pagos',
@@ -97,7 +104,7 @@ class View {
                     'icono' => 'fa-money-bill-alt',
                     'enlace' => BASE_URL . 'pago/sancion/'
                     );
-            $menu[] = array(
+	    $menu[] = array(
                     'id' => 'pagosotro',
                     'titulo' => 'Pagos Otro',
                     'icono' => 'fa-money-bill-alt',

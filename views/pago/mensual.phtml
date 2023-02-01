@@ -39,6 +39,7 @@
                     <th>Fecha</th>
                     <th>Tarjeta</th>
                     <th>Valor</th>
+                    <th>Tipo</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
@@ -48,16 +49,18 @@
                     <th>Fecha</th>
                     <th>Ticket</th>
                     <th>Valor</th>
+                    <th>Tipo</th>
                     <th>Acciones</th>
                   </tr>
                 </tfoot>
                 <tbody>
                   <?php foreach ($this->pagos as $key => $value) { ?>
                   <tr>
-		    <td><?php echo $key+1; ?></td>
+		                <td><?php echo $key+1; ?></td>
                     <td data-order="<?php echo $value->getFechaRegistro()->format("U") ?>"><?php echo $value->getFechaRegistro()->format('d/m/Y h:i:s a'); ?></td>
                     <td><?php echo $value->getTarjeta()->getRfid(); ?></td>
                     <td><?php echo $value->getValor(); ?></td>
+                    <td>Normal</td>
                     <td style="text-align: center">
             		      <a
             			     title="Descargar Factura" 
@@ -65,6 +68,22 @@
 	                       <i class="fas fa-print"></i>
                       </a>
 		                </td>
+                  </tr>
+                  <?php } ?>
+                  <?php foreach ($this->pagoSinIva as $key => $value) { ?>
+                  <tr>
+                    <td><?php echo $key+1; ?></td>
+                    <td data-order="<?php echo $value->getFechaRegistro()->format("U") ?>"><?php echo $value->getFechaRegistro()->format('d/m/Y h:i:s a'); ?></td>
+                    <td><?php echo $value->getTarjeta()->getRfid(); ?></td>
+                    <td><?php echo $value->getValor(); ?></td>
+                    <td>Sin Iva</td>
+                    <td style="text-align: center">
+                      <a
+                       title="Descargar Factura" 
+                       href="<?php echo BASE_URL.$this->_presentRequest->getControlador().'/'; ?>generarFacturaMensualSinIva/<?php echo $value->getId(); ?>/">
+                         <i class="fas fa-print"></i>
+                      </a>
+                    </td>
                   </tr>
                   <?php } ?>
                 </tbody>

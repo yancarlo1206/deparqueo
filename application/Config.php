@@ -22,10 +22,12 @@ define('HASH_KEY', '4g6b6e832cf79');
 	define('DB_HOST', 'localhost');	
 	define('DB_HOST_LOCAL', false);	
 }*/
-define('BASE_URL', 'http://localhost/deparqueo/');
+//define('BASE_URL', 'http://192.168.0.150/deparqueo/');
+//define('BASE_URL', 'http://190.145.239.11/deparqueo/');
+define('BASE_URL', 'http://'.$_SERVER['HTTP_HOST'].'/deparqueo/');
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_PASS', 'adminoiti2019**');
 define('DB_NAME', 'deparqueo_bd');
 define('DB_PORT', '');
 define('DB_CHAR', 'utf8');
