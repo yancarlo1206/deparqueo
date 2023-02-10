@@ -51,8 +51,9 @@ class busquedaController extends Controller {
                 $this->_tipoSancion->get(3);
                 $valorAdicional = $this->_tipoSancion->getInstance()->getValor() * $ingreso->getCasco();
                 $totalPagar = $totalPagar - $valorAdicional;
-              }
-            $iva = $totalPagar * 0.19;
+            }
+            $baseGrabable = round($totalPagar / 1.19);
+            $iva = $totalPagar - $baseGrabable;
             $valor = $totalPagar - $iva;
     		$this->_pago->getInstance()->setValor($valor);
             $this->_pago->getInstance()->setIva($iva);
@@ -77,7 +78,8 @@ class busquedaController extends Controller {
 	    		$this->_pagoServicio->save();
                 if($ingreso->getCasco() > 0){
                     $this->_pago = $this->loadModel('pago');
-                    $iva = $valorAdicional * 0.19;
+                    $baseGrabable = round($valorAdicional / 1.19);
+                    $iva = $valorAdicional - $baseGrabable;
                     $valor = $valorAdicional - $iva;
                     $this->_pago->getInstance()->setFecha(new \DateTime());
                     $this->_pago->getInstance()->setValor($valor);
@@ -246,7 +248,8 @@ class busquedaController extends Controller {
         if($this->getInt('guardar') == 1){
             $this->_pago->getInstance()->setFecha(new \DateTime());
             $totalPagar = $this->getPostParam('totalPagarNumero');
-            $iva = $totalPagar * 0.19;
+            $baseGrabable = round($totalPagar / 1.19);
+            $iva = $totalPagar - $baseGrabable;
             $valor = $totalPagar - $iva;
             $this->_pago->getInstance()->setValor($valor);
             $this->_pago->getInstance()->setIva($iva);
@@ -348,7 +351,8 @@ class busquedaController extends Controller {
             $this->_pago->getInstance()->setFecha(new \DateTime());
             $documento = $this->getTexto('documento');
             $totalPagar = $this->_tipoSancion->get($this->getTexto('tipoSancion'))->getValor();
-            $iva = $totalPagar * 0.19;
+            $baseGrabable = round($totalPagar / 1.19);
+            $iva = $totalPagar - $baseGrabable;
             $valor = $totalPagar - $iva;
             $this->_pago->getInstance()->setValor($valor);
             $this->_pago->getInstance()->setIva($iva);
@@ -420,7 +424,8 @@ class busquedaController extends Controller {
             $this->_pago->getInstance()->setFecha(new \DateTime());
             $documento = $this->getTexto('documento');
             $totalPagar = $this->_tipoSancion->get($this->getTexto('tipoSancion'))->getValor();
-            $iva = $totalPagar * 0.19;
+            $baseGrabable = round($totalPagar / 1.19);
+            $iva = $totalPagar - $baseGrabable;
             $valor = $totalPagar - $iva;
             $this->_pago->getInstance()->setValor($valor);
             $this->_pago->getInstance()->setIva($iva);

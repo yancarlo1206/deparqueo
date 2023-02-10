@@ -64,7 +64,8 @@ class pagoController extends Controller {
                 $valorAdicional = $this->_tipoSancion->getInstance()->getValor() * $ingreso->getCasco();
                 $totalPagar = $totalPagar - $valorAdicional;
               }
-            $iva = $totalPagar * 0.19;
+            $baseGrabable = round($totalPagar / 1.19);
+            $iva = $totalPagar - $baseGrabable;
             $valor = $totalPagar - $iva;
     		$this->_pago->getInstance()->setValor($valor);
             $this->_pago->getInstance()->setIva($iva);
@@ -89,8 +90,9 @@ class pagoController extends Controller {
 	    		$this->_pagoServicio->save();
                 if($ingreso->getCasco() > 0){
                     $this->_pago = $this->loadModel('pago');
-                    $iva = $valorAdicional * 0.19;
-                    $valor = $valorAdicional - $iva;
+                    $baseGrabable = round($totalPagar / 1.19);
+                    $iva = $totalPagar - $baseGrabable;
+                    $valor = $totalPagar - $iva;
                     $this->_pago->getInstance()->setFecha(new \DateTime());
                     $this->_pago->getInstance()->setValor($valor);
                     $this->_pago->getInstance()->setIva($iva);
@@ -266,7 +268,8 @@ class pagoController extends Controller {
             }
             $this->_pago->getInstance()->setFecha(new \DateTime());
             $totalPagar = $this->getPostParam('totalPagarNumero');
-            $iva = $totalPagar * 0.19;
+            $baseGrabable = round($totalPagar / 1.19);
+            $iva = $totalPagar - $baseGrabable;
             $valor = $totalPagar - $iva;
             $this->_pago->getInstance()->setValor($valor);
             $this->_pago->getInstance()->setIva($iva);
@@ -390,7 +393,8 @@ class pagoController extends Controller {
             $this->_pago->getInstance()->setFecha(new \DateTime());
             $documento = $this->getPostParam('documento');
             $totalPagar = $this->_tipoSancion->get($this->getTexto('tipoSancion'))->getValor();
-            $iva = $totalPagar * 0.19;
+            $baseGrabable = round($totalPagar / 1.19);
+            $iva = $totalPagar - $baseGrabable;
             $valor = $totalPagar - $iva;
             $this->_pago->getInstance()->setValor($valor);
             $this->_pago->getInstance()->setIva($iva);
@@ -462,7 +466,8 @@ class pagoController extends Controller {
             $this->_pago->getInstance()->setFecha(new \DateTime());
             $documento = $this->getTexto('documento');
             $totalPagar = $this->_tipoSancion->get($this->getTexto('tipoSancion'))->getValor();
-            $iva = $totalPagar * 0.19;
+            $baseGrabable = round($totalPagar / 1.19);
+            $iva = $totalPagar - $baseGrabable;
             $valor = $totalPagar - $iva;
             $this->_pago->getInstance()->setValor($valor);
             $this->_pago->getInstance()->setIva($iva);
@@ -531,8 +536,8 @@ class pagoController extends Controller {
         "ticket" => "".$ticket,
         "fecha" => "".$ingreso->getFecha()->format('d/m/Y'),
         "facturaventa" => "".$pago[0]->getFactura(),
-        "fechaingreso" => "".$ingreso->getFechaIngreso()->format('d/m/Y H:i:s'),
-        "fechasalida" => "".$ingreso->getFecha()->format('d/m/Y'),
+        "fechaingreso" => "".$ingreso->getFechaIngreso()->format('d/m/Y H:i A'),
+        "fechasalida" => "".$ingreso->getFechaSalida()->format('d/m/Y H:i A'),
         "casco" => "".$casco,
         "iva" => "".$iva,
         "valortotal" => "".$valorTotal,

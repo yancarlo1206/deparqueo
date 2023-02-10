@@ -27,7 +27,7 @@ define('HASH_KEY', '4g6b6e832cf79');
 define('BASE_URL', 'http://'.$_SERVER['HTTP_HOST'].'/deparqueo/');
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
-define('DB_PASS', 'adminoiti2019**');
+define('DB_PASS', 'root');
 define('DB_NAME', 'deparqueo_bd');
 define('DB_PORT', '');
 define('DB_CHAR', 'utf8');
