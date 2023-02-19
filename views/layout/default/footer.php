@@ -100,6 +100,10 @@
   <script type="text/javascript">
     jQuery(document).ready(function($) {
       //$("#licenseModal").modal();
+      <?php if(Session::get('ticketPrint')){ ?>
+          document.getElementById("imprimirTicket").click();
+        <?php Session::destroy("ticketPrint"); ?>
+      <?php } ?>
     });
   </script>
 

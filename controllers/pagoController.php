@@ -112,7 +112,8 @@ class pagoController extends Controller {
                 $consecutivo = $consecutivo+1;
                 $this->_variable->getInstance()->setValor($consecutivo);
                 $this->_variable->update();
-                $this->generarFactura($ingreso->getNumero(), true);
+                $this->generarFactura($ingreso->getNumero(), false);
+                Session::set('ticketPrint', $ingreso->getNumero());
 				Session::set('mensaje','Registro de Pago Correcto');
     		} catch (Exception $e) {
     			Session::set('error','Error en el Proceso');
@@ -537,7 +538,7 @@ class pagoController extends Controller {
         "fecha" => "".$ingreso->getFecha()->format('d/m/Y'),
         "facturaventa" => "".$pago[0]->getFactura(),
         "fechaingreso" => "".$ingreso->getFechaIngreso()->format('d/m/Y H:i A'),
-        "fechasalida" => "".$ingreso->getFechaSalida()->format('d/m/Y H:i A'),
+        "fechasalida" => "".$ingreso->getFecha()->format('d/m/Y'),
         "casco" => "".$casco,
         "iva" => "".$iva,
         "valortotal" => "".$valorTotal,

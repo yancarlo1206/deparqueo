@@ -101,7 +101,11 @@
       </form>
     </div>
   </div>
-
+<a 
+  id="imprimirTicket"
+  title="Descargar Factura" 
+  href="<?php echo BASE_URL.$this->_presentRequest->getControlador().'/'; ?>generarFactura/<?php echo Session::get('ticketPrint'); ?>/">
+</a>
 </div>
 
 </div>
