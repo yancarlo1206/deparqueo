@@ -104,7 +104,13 @@ class View {
                     'icono' => 'fa-money-bill-alt',
                     'enlace' => BASE_URL . 'pago/sancion/'
                     );
-	    $menu[] = array(
+            $menu[] = array(
+                    'id' => 'pagosbathroom',
+                    'titulo' => 'Pagos Baño',
+                    'icono' => 'fa-money-bill-alt',
+                    'enlace' => BASE_URL . 'pago/bathroom/'
+                    );
+	        $menu[] = array(
                     'id' => 'pagosotro',
                     'titulo' => 'Pagos Otro',
                     'icono' => 'fa-money-bill-alt',

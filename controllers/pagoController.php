@@ -42,13 +42,14 @@ class pagoController extends Controller {
             $fechaIni = $fecha->format('Y-m-d')." 00:00:00";
             $fechaFin = $fecha->format('Y-m-d')." 23:59:59";
         }
-    	$this->_view->pagos = $this->_pago->dql(
+    	/*$this->_view->pagos = $this->_pago->dql(
             "SELECT p.fecha, i.numero, sum(p.valor+p.iva) as total FROM Entities\Pago p 
             INNER JOIN Entities\Ingreso i WITH i.id = p.ingreso
             WHERE p.fecha >=:fechaIni AND p.fecha <=:fechaFin AND p.ingreso is not null
             GROUP BY p.ingreso order by p.fecha desc",
            array('fechaIni' => $fechaIni, 'fechaFin' => $fechaFin)
-        );
+        );*/
+        $this->_view->pagos = null;
     	$this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' :: Listado';
         $this->_view->renderizar('index', 'pagos');
     }
@@ -514,6 +515,26 @@ class pagoController extends Controller {
         echo json_encode($array);
     }
 
+    public function bathroom() {
+        Session::accesoEstricto(array('CAJERO'));
+        $fecha = new \DateTime();
+        $this->_view->fecha = $fecha->format('d/m/Y');
+        $fechaIni = $fecha->format('Y-m-d')." 00:00:00";
+        $fechaFin = $fecha->format('Y-m-d')." 23:59:59";
+        if($this->getPostParam('fecha')){
+            $fecha = new \DateTime($this->getFecha($this->getTexto('fecha')));
+            $this->_view->fecha = $fecha->format('d/m/Y');
+            $fechaIni = $fecha->format('Y-m-d')." 00:00:00";
+            $fechaFin = $fecha->format('Y-m-d')." 23:59:59";
+        }
+        $this->_view->pagos = $this->_pago->dql(
+            "SELECT p FROM Entities\Pagosancion p JOIN p.tiposancion ts WHERE p.fecha >=:fechaIni AND p.fecha <=:fechaFin AND ts.otro = 2 order by p.fecha desc",
+           array('fechaIni' => $fechaIni, 'fechaFin' => $fechaFin)
+        );
+        $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' Pagos Servicio Baño :: Listado';
+        $this->_view->renderizar('bathroom', 'pagosotro');
+    }
+
     public function generarFactura($ticket=null, $automatico=false){
         $ingreso = $this->_ingreso->findByObject(array('numero' => $ticket));
         $pago = $this->_pago->findBy(array('ingreso' => $ingreso->getId()));
@@ -538,7 +559,9 @@ class pagoController extends Controller {
         "fecha" => "".$ingreso->getFecha()->format('d/m/Y'),
         "facturaventa" => "".$pago[0]->getFactura(),
         "fechaingreso" => "".$ingreso->getFechaIngreso()->format('d/m/Y H:i A'),
-        "fechasalida" => "".$ingreso->getFecha()->format('d/m/Y'),
+        //"fechasalida" => "".$ingreso->getFecha()->format('d/m/Y'),
+        "fechasalida" => "".$pago[0]->getFecha()->format('d/m/Y H:i A'),
+        
         "casco" => "".$casco,
         "iva" => "".$iva,
         "valortotal" => "".$valorTotal,
