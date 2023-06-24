@@ -532,7 +532,92 @@ class pagoController extends Controller {
            array('fechaIni' => $fechaIni, 'fechaFin' => $fechaFin)
         );
         $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' Pagos Servicio Baño :: Listado';
-        $this->_view->renderizar('bathroom', 'pagosotro');
+        $this->_view->renderizar('bathroom', 'pagosbathroom');
+    }
+
+    public function registrarbathroom(){
+        Session::accesoEstricto(array('CAJERO'));
+        if($this->getInt('guardar') == 1){
+            $tarjeta = $this->_tarjeta->get($this->getPostParam('tarjeta'));
+            if($tarjeta->getCliente()->getTipoCliente()->getId() == 1){
+                $this->pagosiniva($this->getPostParam('tarjeta'), $this->getPostParam('totalPagarNumero'));                
+            }
+            $this->_pago->getInstance()->setFecha(new \DateTime());
+            $totalPagar = $this->getPostParam('totalPagarNumero');
+            $baseGrabable = round($totalPagar / 1.19);
+            $iva = $totalPagar - $baseGrabable;
+            $valor = $totalPagar - $iva;
+            $this->_pago->getInstance()->setValor($valor);
+            $this->_pago->getInstance()->setIva($iva);
+            $this->_pago->getInstance()->setEntrego($this->getPostParam('recibidoNumero'));
+            $this->_pago->getInstance()->setCambio($this->getPostParam('devolverNumero'));
+            $this->_pago->getInstance()->setUsuario($this->_usuario->get(Session::get('codigo')));
+            $this->_pago->getInstance()->setCaja($this->_caja->get(1));
+            $this->_variable->get(1);
+            $consecutivo = $this->_variable->getInstance()->getValor();
+            $this->_pago->getInstance()->setFactura($consecutivo);
+            try {
+                $this->_pago->save();
+                $consecutivo = $consecutivo+1;
+                $this->_variable->getInstance()->setValor($consecutivo);
+                $this->_variable->update();
+                $this->_pagoMensual->getInstance()->setId($this->_pago->getInstance());
+                $this->_pagoMensual->getInstance()->setTarjeta($this->_tarjeta->get($this->getPostParam('tarjeta')));
+                $this->_pagoMensual->getInstance()->setValor($this->getPostParam('totalPagarNumero'));
+                $this->_pagoMensual->getInstance()->setFecha(new \DateTime());
+                $this->_pagoMensual->getInstance()->setFechaRegistro(new \DateTime());
+                $this->_pagoMensual->save();
+                $fechaTarjeta = $this->_tarjeta->getInstance()->getFechaFin();
+                $fechaTarjeta = $fechaTarjeta->format('d-m-Y');
+                $newDate = date("d-m-Y",strtotime($fechaTarjeta."+ 1 month"));
+                $this->_tarjeta->getInstance()->setFechaFin(new \DateTime($newDate));
+                $this->_tarjeta->update();
+                $this->generarFacturaMensual($this->_pago->getInstance()->getId(), true);
+                Session::set('mensaje','Registro de Pago Mensual Correcto');
+            } catch (Exception $e) {
+                Session::set('error','Error en el Proceso');
+            }
+            $this->redireccionar('pago/registrarmensual/');
+        }
+        $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' Mensual :: Registrar';
+        $this->_view->renderizar('registromensual', 'pagosmensual');   
+    }
+
+    public function cargarPagoBathroom(){
+        $tarjeta = $this->getPostParam('tarjeta');
+        $array = array();
+        $tarjeta = $this->_tarjeta->findByObject(array('rfid' => $tarjeta));
+        if(!$tarjeta){
+            $array['data'] = "error";   
+            $array['mensaje'] = "La Tarjeta no Existe";
+            echo json_encode($array);
+            exit;
+        }
+        if(!$tarjeta->getTarifa()){
+            $tipoCliente = $tarjeta->getCliente()->getTipoCliente()->getId();
+            if($tipoCliente == 1){
+                $tipoTarifa = 3;
+            }elseif($tipoCliente == 2){    
+                $tipoTarifa = 5;
+            }else{
+                $tipoTarifa = 12;
+            }
+            $tarifa = $this->_tarifa->dql("SELECT t FROM Entities\Tarifa t 
+                WHERE t.fechainicio <=:fecha AND t.fechafin >=:fecha 
+                AND t.tipovehiculo =:tipoVehiculo AND t.tipotarifa =:tipoTarifa",
+                array(
+                    'fecha' => new \DateTime(), 
+                    'tipoVehiculo' => $tarjeta->getTipoVehiculo()->getId(),
+                    'tipoTarifa' => $tipoTarifa));
+            $totalPagar = $tarifa[0]->getValor();
+        }else{
+            $totalPagar = $tarjeta->getTarifa()->getValor();
+        }
+        $array['data'] = "ok";
+        $array['tarjeta'] = $tarjeta->getRfid();
+        $array['cliente'] = $tarjeta->getCliente()->getNombre();
+        $array['totalPagar'] = $totalPagar;
+        echo json_encode($array);
     }
 
     public function generarFactura($ticket=null, $automatico=false){

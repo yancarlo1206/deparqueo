@@ -86,6 +86,32 @@ jQuery(document).ready(function($) {
 			}
 		},"json");
 	});
+	$("#btnCalcularTarjetaBathroom").click(function(event) {
+		event.preventDefault();
+		var tarjeta = $("#inputTarjeta").val();
+		if(tarjeta == ''){
+			$(".mensajeError").html("Se Debe Registrar una Tarjeta");
+			$(".alert").css('display', 'block');
+			setTimeout(function(){ 
+				$(".alert").css('display', 'none');    
+			}, 3000);
+			return;
+		}
+		$.post(BASE.url + 'pago/cargarPagoBathroom', {tarjeta: tarjeta}, function(data, textStatus, xhr) {
+			if(data.data == "ok"){
+				$(".formPagoMensual input[name='tarjeta']").val(data.tarjeta);
+				$(".formPagoMensual input[name='cliente']").val(data.cliente);
+				$(".formPagoMensual input[name='totalPagar']").val(data.totalPagar);
+				$(".formPagoMensual input[name='totalPagarNumero']").val(data.totalPagar);
+			}else{
+				$(".mensajeError").html(data.mensaje);
+				$(".alert").css('display', 'block');
+				setTimeout(function(){ 
+					$(".alert").css('display', 'none');    
+				}, 3000); 
+			}
+		},"json");
+	});
 	$(".formPagoMensual input[name='recibido']").keyup(function(){
     	if($(".formPagoMensual input[name='recibido']").val().length > 4){
     		$(".formPagoMensual input[name='recibidoNumero']").val($(".formPagoMensual input[name='recibido']").val().substring(2).replace(',',''));
