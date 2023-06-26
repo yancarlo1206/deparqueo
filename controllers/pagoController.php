@@ -27,6 +27,8 @@ class pagoController extends Controller {
         $this->_variable = $this->loadModel('variable');
         $this->_configuracion = $this->loadModel('configuracion');
 
+        $this->_tarjetaBathroom = $this->loadModel('tarjetabathroom');
+
         $this->_view->setJs(array('validar'));
     }
     
@@ -579,44 +581,32 @@ class pagoController extends Controller {
             }
             $this->redireccionar('pago/registrarmensual/');
         }
-        $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' Mensual :: Registrar';
-        $this->_view->renderizar('registromensual', 'pagosmensual');   
+        $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' Servicio Baño :: Registrar';
+        $this->_view->renderizar('registrobathroom', 'pagosbathroom');   
     }
 
     public function cargarPagoBathroom(){
         $tarjeta = $this->getPostParam('tarjeta');
         $array = array();
-        $tarjeta = $this->_tarjeta->findByObject(array('rfid' => $tarjeta));
+        $tarjeta = $this->_tarjetaBathroom->findByObject(array('rfid' => $tarjeta));
         if(!$tarjeta){
             $array['data'] = "error";   
             $array['mensaje'] = "La Tarjeta no Existe";
             echo json_encode($array);
             exit;
         }
-        if(!$tarjeta->getTarifa()){
-            $tipoCliente = $tarjeta->getCliente()->getTipoCliente()->getId();
-            if($tipoCliente == 1){
-                $tipoTarifa = 3;
-            }elseif($tipoCliente == 2){    
-                $tipoTarifa = 5;
-            }else{
-                $tipoTarifa = 12;
-            }
-            $tarifa = $this->_tarifa->dql("SELECT t FROM Entities\Tarifa t 
-                WHERE t.fechainicio <=:fecha AND t.fechafin >=:fecha 
-                AND t.tipovehiculo =:tipoVehiculo AND t.tipotarifa =:tipoTarifa",
-                array(
-                    'fecha' => new \DateTime(), 
-                    'tipoVehiculo' => $tarjeta->getTipoVehiculo()->getId(),
-                    'tipoTarifa' => $tipoTarifa));
-            $totalPagar = $tarifa[0]->getValor();
-        }else{
-            $totalPagar = $tarjeta->getTarifa()->getValor();
-        }
+        $tipoSancion = 9;
+        $array = array();
         $array['data'] = "ok";
+        if($tipoSancion){
+            $tipoSancion = $this->_tipoSancion->get($tipoSancion);
+            $array['totalPagar'] = $tipoSancion->getValor();
+        }else{
+            $array['totalPagar'] = "";
+        }
         $array['tarjeta'] = $tarjeta->getRfid();
-        $array['cliente'] = $tarjeta->getCliente()->getNombre();
-        $array['totalPagar'] = $totalPagar;
+        $this->_tarjeta->get($tarjeta->getRfid());
+        $array['cliente'] = $this->_tarjeta->getInstance()->getCliente()->getNombre();
         echo json_encode($array);
     }
 

@@ -12,4 +12,5 @@ class pagomensualModel extends Model {
         $this->instance = $this->loadObjeto('Pagomensual'); 
     }
 }
+
 ?>

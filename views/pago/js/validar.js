@@ -99,10 +99,10 @@ jQuery(document).ready(function($) {
 		}
 		$.post(BASE.url + 'pago/cargarPagoBathroom', {tarjeta: tarjeta}, function(data, textStatus, xhr) {
 			if(data.data == "ok"){
-				$(".formPagoMensual input[name='tarjeta']").val(data.tarjeta);
-				$(".formPagoMensual input[name='cliente']").val(data.cliente);
-				$(".formPagoMensual input[name='totalPagar']").val(data.totalPagar);
-				$(".formPagoMensual input[name='totalPagarNumero']").val(data.totalPagar);
+				$(".formPagoBathroom input[name='tarjeta']").val(data.tarjeta);
+				$(".formPagoBathroom input[name='cliente']").val(data.cliente);
+				$(".formPagoBathroom input[name='tarifa']").val(data.totalPagar);
+				$(".formPagoBathroom input[name='totalPagarNumero']").val(data.totalPagar);
 			}else{
 				$(".mensajeError").html(data.mensaje);
 				$(".alert").css('display', 'block');
@@ -119,6 +119,27 @@ jQuery(document).ready(function($) {
     		$(".formPagoMensual input[name='devolverNumero']").val(devolver);
     		$(".formPagoMensual input[name='devolver']").val(devolver);
     	}
+	});
+	$(".formPagoBathroom input[name='recibido']").keyup(function(){
+    	if($(".formPagoBathroom input[name='recibido']").val().length > 4){
+    		$(".formPagoBathroom input[name='recibidoNumero']").val($(".formPagoBathroom input[name='recibido']").val().substring(2).replace(',',''));
+    		var devolver = $(".formPagoBathroom input[name='recibido']").val().substring(2).replace(',','') - $(".formPagoBathroom input[name='totalPagar']").val().substring(2).replace(',','');
+    		$(".formPagoBathroom input[name='devolverNumero']").val(devolver);
+    		$(".formPagoBathroom input[name='devolver']").val(devolver);
+    	}
+	});
+	$(".formPagoBathroom input[name='entradas']").keyup(function(){
+		if($(".formPagoBathroom input[name='tarifa']").val() == ""){
+			$(".mensajeError").html("Se Debe Registrar una Tarjeta");
+			$(".alert").css('display', 'block');
+			setTimeout(function(){ 
+				$(".alert").css('display', 'none');    
+			}, 3000);
+			return;
+		}
+		var totalPagar = $(".formPagoBathroom input[name='entradas']").val() * $(".formPagoBathroom input[name='tarifa']").val();
+		$(".formPagoBathroom input[name='totalPagarNumero']").val(totalPagar);
+		$(".formPagoBathroom input[name='totalPagar']").val(totalPagar);
 	});
 	$("#tipoSancion").change(function(event) {
 		$.post(BASE.url + 'pago/cargarPagoSancion', {tipoSancion: $("#tipoSancion").val()}, function(data, textStatus, xhr) {

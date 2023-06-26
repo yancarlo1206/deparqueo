@@ -34,17 +34,25 @@
       <h6 class="m-0 font-weight-bold text-primary">Informaci&oacute;n de Pago Servicio Baño</h6>
   </div>
     <div class="card-body">
-      <form class="formPagoMensual" method="post">
+      <form class="formPagoBathroom" method="post">
         <input type="hidden" name="guardar" value="1">
         <input type="hidden" name="tarjeta" value="">
 
         <div class="form-row">
-          <div class="form-group col-md-3">
+          <div class="form-group col-md-4">
             <label>Cliente</label>
             <input name="cliente" type="text" class="form-control" readonly>
           </div>
-          <div class="form-group col-md-3">
-            <label>Total a Pagar</label>
+          <div class="form-group col-md-4">
+            <label>Entradas</label>
+            <input name="entradas" type="text" class="form-control" id="inputEntrada">
+          </div>
+          <div class="form-group col-md-4">
+            <label>Tarifa</label>
+            <input name="tarifa" type="text" class="form-control" readonly>
+          </div>
+          <div class="form-group col-md-4">
+            <label>Total Pagar</label>
             <input 
               name="totalPagar" 
               type="text" 
@@ -53,7 +61,7 @@
               'digitsOptional': false, 'prefix': '$ ', 'placeholder': '0'" readonly>
             <input type="hidden" name="totalPagarNumero" value="">
           </div>
-          <div class="form-group col-md-3">
+          <div class="form-group col-md-4">
             <label>Recibido</label>
             <input 
               name="recibido" 
@@ -63,7 +71,7 @@
               'digitsOptional': false, 'prefix': '$ ', 'placeholder': '0'" required>
               <input type="hidden" name="recibidoNumero" value="">
           </div>
-          <div class="form-group col-md-3">
+          <div class="form-group col-md-4">
             <label>A Devolver</label>
             <input 
               name="devolver" 
