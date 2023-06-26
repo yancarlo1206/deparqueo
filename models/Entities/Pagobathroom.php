@@ -8,7 +8,7 @@ namespace Entities;
 /**
  * Pagobathroom
  *
- * @Table(name="pagobathroom", indexes={@Index(name="IXFK_pagobathroom_tarjeta", columns={"tarjeta"})})
+ * @Table(name="pagobathroom", indexes={@Index(name="IXFK_pagobathroom_tarjetabathroom", columns={"tarjeta"})})
  * @Entity
  */
 class Pagobathroom
@@ -50,9 +50,9 @@ function __construct() {}
     private $id;
 
     /**
-     * @var \Tarjeta
+     * @var \Tarjetabathroom
      *
-     * @ManyToOne(targetEntity="Tarjeta")
+     * @ManyToOne(targetEntity="Tarjetabathroom")
      * @JoinColumns({
      *   @JoinColumn(name="tarjeta", referencedColumnName="rfid")
      * })

@@ -28,6 +28,7 @@ class pagoController extends Controller {
         $this->_configuracion = $this->loadModel('configuracion');
 
         $this->_tarjetaBathroom = $this->loadModel('tarjetabathroom');
+        $this->_pagoBathroom = $this->loadModel('pagobathroom');
 
         $this->_view->setJs(array('validar'));
     }
@@ -530,7 +531,7 @@ class pagoController extends Controller {
             $fechaFin = $fecha->format('Y-m-d')." 23:59:59";
         }
         $this->_view->pagos = $this->_pago->dql(
-            "SELECT p FROM Entities\Pagosancion p JOIN p.tiposancion ts WHERE p.fecha >=:fechaIni AND p.fecha <=:fechaFin AND ts.otro = 2 order by p.fecha desc",
+            "SELECT p FROM Entities\Pagobathroom p WHERE p.fecha >=:fechaIni AND p.fecha <=:fechaFin order by p.fecha desc",
            array('fechaIni' => $fechaIni, 'fechaFin' => $fechaFin)
         );
         $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' Pagos Servicio Baño :: Listado';
@@ -540,10 +541,7 @@ class pagoController extends Controller {
     public function registrarbathroom(){
         Session::accesoEstricto(array('CAJERO'));
         if($this->getInt('guardar') == 1){
-            $tarjeta = $this->_tarjeta->get($this->getPostParam('tarjeta'));
-            if($tarjeta->getCliente()->getTipoCliente()->getId() == 1){
-                $this->pagosiniva($this->getPostParam('tarjeta'), $this->getPostParam('totalPagarNumero'));                
-            }
+            
             $this->_pago->getInstance()->setFecha(new \DateTime());
             $totalPagar = $this->getPostParam('totalPagarNumero');
             $baseGrabable = round($totalPagar / 1.19);
@@ -560,26 +558,24 @@ class pagoController extends Controller {
             $this->_pago->getInstance()->setFactura($consecutivo);
             try {
                 $this->_pago->save();
+                $this->_tarjetaBathroom->get($this->getPostParam('tarjeta'));
+                $this->_tarjetaBathroom->getInstance()->setEntradas($this->_tarjetaBathroom->getInstance()->getEntradas() + $this->getInt('entradas'));
+                $this->_tarjetaBathroom->update();
                 $consecutivo = $consecutivo+1;
                 $this->_variable->getInstance()->setValor($consecutivo);
                 $this->_variable->update();
-                $this->_pagoMensual->getInstance()->setId($this->_pago->getInstance());
-                $this->_pagoMensual->getInstance()->setTarjeta($this->_tarjeta->get($this->getPostParam('tarjeta')));
-                $this->_pagoMensual->getInstance()->setValor($this->getPostParam('totalPagarNumero'));
-                $this->_pagoMensual->getInstance()->setFecha(new \DateTime());
-                $this->_pagoMensual->getInstance()->setFechaRegistro(new \DateTime());
-                $this->_pagoMensual->save();
-                $fechaTarjeta = $this->_tarjeta->getInstance()->getFechaFin();
-                $fechaTarjeta = $fechaTarjeta->format('d-m-Y');
-                $newDate = date("d-m-Y",strtotime($fechaTarjeta."+ 1 month"));
-                $this->_tarjeta->getInstance()->setFechaFin(new \DateTime($newDate));
-                $this->_tarjeta->update();
-                $this->generarFacturaMensual($this->_pago->getInstance()->getId(), true);
-                Session::set('mensaje','Registro de Pago Mensual Correcto');
+                $this->_pagoBathroom->getInstance()->setId($this->_pago->getInstance());
+                $this->_pagoBathroom->getInstance()->setTarjeta($this->_tarjetaBathroom->get($this->getPostParam('tarjeta')));
+                $this->_pagoBathroom->getInstance()->setValor($this->getPostParam('totalPagarNumero'));
+                $this->_pagoBathroom->getInstance()->setFecha(new \DateTime());
+                $this->_pagoBathroom->getInstance()->setFechaRegistro(new \DateTime());
+                $this->_pagoBathroom->save();
+                //$this->generarFacturaMensual($this->_pago->getInstance()->getId(), true);
+                Session::set('mensaje','Registro de Pago Servicio de Baño Correcto');
             } catch (Exception $e) {
                 Session::set('error','Error en el Proceso');
             }
-            $this->redireccionar('pago/registrarmensual/');
+            $this->redireccionar('pago/registrarbathroom/');
         }
         $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' Servicio Baño :: Registrar';
         $this->_view->renderizar('registrobathroom', 'pagosbathroom');   
