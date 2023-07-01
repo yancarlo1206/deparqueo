@@ -1,0 +1,53 @@
+<div class="container-fluid">
+
+        <!-- Page Heading -->
+        <h1 class="h3 mb-2 text-gray-800">Listado de Tarjetas - Servicio de Baño</h1>
+        <!-- DataTales Example -->
+
+        <div class="card shadow mb-4">
+          <div class="card-body">
+            <?php if(isset($this->datos) && count($this->datos)){?>
+            <div class="table-responsive">
+              <table class="table table-bordered" id="dataTableEsp" width="100%" cellspacing="0">
+                <thead>
+                  <tr>
+                    <th>RFID</th>
+                    <th>Entradas</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tfoot>
+                  <tr>
+                    <th>RFID</th>
+                    <th>Cliente</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </tfoot>
+                <tbody>
+                  <?php foreach ($this->datos as $key => $value) { ?>
+                  <tr>
+                    <td><?php echo $value->getRfid(); ?></td>
+                    <td><?php echo $value->getEntradas(); ?></td>
+                    <td>
+                      <?php if($value->getEstado() == 1) echo "ACTIVO"; else echo "INACTIVO"; ?>
+                    </td>
+                    <td></td>
+                  </tr>
+                  <?php } ?>
+                </tbody>
+              </table>
+            </div>
+            <?php }else{ ?>
+              <div class="alert alert-warning" role="alert">
+               No hay tarjetas inactivas.
+              </div>
+            <?php } ?>
+          </div>
+        </div>
+
+      </div>
+
+
+</div>

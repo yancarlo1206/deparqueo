@@ -8,6 +8,7 @@ class tarjetaController extends Controller {
         $this->_tarifa = $this->loadModel("tarifa");
         $this->_tipoVehiculo = $this->loadModel("tipovehiculo");
         $this->_usuario = $this->loadModel("usuario");
+        $this->_tarjetaBathroom = $this->loadModel("tarjetabathroom");
     }
 
     public function index() {
@@ -105,11 +106,8 @@ class tarjetaController extends Controller {
 
     public function bathroom() {
         $this->_model = $this->loadModel($this->_presentRequest->getControlador());
-        $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' :: Listado';
-        $this->_view->controlador = ucwords($this->_presentRequest->getControlador());
-        $this->_view->datos = $this->_model->findBy(array('estado' => 2));
-        $this->_view->text = "Inactivas";
-        $this->_view->renderizar('index', strtolower($this->_presentRequest->getControlador()));
+        $this->_view->datos = $this->_tarjetaBathroom->findBy(array('estado' => 1));
+        $this->_view->renderizar('bathroom', strtolower($this->_presentRequest->getControlador()));
     }
 
 }
