@@ -81,6 +81,7 @@
                 <a class="collapse-item" href="<?php echo BASE_URL ?>tarjeta/vencidas">Vencidas</a>
                 <a class="collapse-item" href="<?php echo BASE_URL ?>tarjeta/inactivas">Inactivas</a>
                 <a class="collapse-item" href="<?php echo BASE_URL ?>busqueda/">Pagos</a>
+                <a class="collapse-item" href="<?php echo BASE_URL ?>tarjeta/bathroom">Baño</a>
               </div>
             </div>
             <?php } ?>

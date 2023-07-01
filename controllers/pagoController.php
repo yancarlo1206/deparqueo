@@ -534,14 +534,13 @@ class pagoController extends Controller {
             "SELECT p FROM Entities\Pagobathroom p WHERE p.fecha >=:fechaIni AND p.fecha <=:fechaFin order by p.fecha desc",
            array('fechaIni' => $fechaIni, 'fechaFin' => $fechaFin)
         );
-        $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' Pagos Servicio Baño :: Listado';
+        $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' Servicio Baño :: Listado';
         $this->_view->renderizar('bathroom', 'pagosbathroom');
     }
 
     public function registrarbathroom(){
         Session::accesoEstricto(array('CAJERO'));
         if($this->getInt('guardar') == 1){
-            
             $this->_pago->getInstance()->setFecha(new \DateTime());
             $totalPagar = $this->getPostParam('totalPagarNumero');
             $baseGrabable = round($totalPagar / 1.19);
@@ -559,8 +558,16 @@ class pagoController extends Controller {
             try {
                 $this->_pago->save();
                 $this->_tarjetaBathroom->get($this->getPostParam('tarjeta'));
-                $this->_tarjetaBathroom->getInstance()->setEntradas($this->_tarjetaBathroom->getInstance()->getEntradas() + $this->getInt('entradas'));
-                $this->_tarjetaBathroom->update();
+                if($this->_tarjetaBathroom->getInstance()){
+                    $this->_tarjetaBathroom->getInstance()->setEntradas($this->_tarjetaBathroom->getInstance()->getEntradas() + $this->getInt('entradas'));
+                    $this->_tarjetaBathroom->update();
+                }else{
+                    $this->_tarjetaBathroom = $this->loadModel('tarjetabathroom');
+                    $this->_tarjetaBathroom->getInstance()->setRfid($this->getPostParam('tarjeta'));
+                    $this->_tarjetaBathroom->getInstance()->setEntradas($this->getInt('entradas'));
+                    $this->_tarjetaBathroom->getInstance()->setEstado(1);
+                    $this->_tarjetaBathroom->save();
+                }
                 $consecutivo = $consecutivo+1;
                 $this->_variable->getInstance()->setValor($consecutivo);
                 $this->_variable->update();
@@ -584,7 +591,7 @@ class pagoController extends Controller {
     public function cargarPagoBathroom(){
         $tarjeta = $this->getPostParam('tarjeta');
         $array = array();
-        $tarjeta = $this->_tarjetaBathroom->findByObject(array('rfid' => $tarjeta));
+        $tarjeta = $this->_tarjeta->findByObject(array('rfid' => $tarjeta));
         if(!$tarjeta){
             $array['data'] = "error";   
             $array['mensaje'] = "La Tarjeta no Existe";
@@ -601,8 +608,7 @@ class pagoController extends Controller {
             $array['totalPagar'] = "";
         }
         $array['tarjeta'] = $tarjeta->getRfid();
-        $this->_tarjeta->get($tarjeta->getRfid());
-        $array['cliente'] = $this->_tarjeta->getInstance()->getCliente()->getNombre();
+        $array['cliente'] = $tarjeta->getCliente()->getNombre();
         echo json_encode($array);
     }
 
@@ -734,6 +740,41 @@ class pagoController extends Controller {
 
     public function generarFacturaSancion($pago=null, $automatico=false){
         $pagoSancion = $this->_pagoSancion->findByObject(array('id' => $pago));
+        $cliente = $pagoSancion->getDocumento();
+        $tipoSancion = $pagoSancion->getTipoSancion()->getDescripcion();
+        $pago = $this->_pago->findByObject(array('id' => $pago));
+        $data = array(
+        "facturaventa" => "".$pago->getFactura(),
+        "fecha" => "".$pago->getFecha()->format('d/m/Y'),
+        "concepto" => "".$tipoSancion,
+        "cliente" => "".$cliente,
+        "iva" => "".$pago->getIva(),
+        "valortotal" => "".($pago->getValor() + $pago->getIva()),
+        "entrego" => "".$pago->getEntrego(),
+        "cambio" => "".$pago->getCambio(),
+        "subtotal" => "".$pago->getValor());
+        if($automatico){
+            $impresion = $this->_configuracion->get(3);
+            $ch = curl_init("http://".$impresion->getValor().":8090/reporte/imprimir/facturao_210");
+        }else{
+           $ch = curl_init("http://192.168.0.150:8086/pdf/0/facturao_210");
+        }
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS,json_encode($data));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json','X-Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjb2RpZ28iOiIwMDIwMyIsInRpcG8iOiJkb2NlbnRlIn0.oOf_khS-4ZBzyGomdKd2_QswKCS-w2aJNir4CGV5-iM'));
+        $response = curl_exec($ch);
+        curl_close($ch);
+        if($automatico){
+            return true;
+        }else{
+            //header("Location:http://192.168.0.150:8085/files/informes/".$response);
+            header("Location:http://".$_SERVER['HTTP_HOST'].":8085/files/informes/".$response);
+        }
+    }
+
+    public function generarFacturaBathroom($pago=null, $automatico=false){
+        $pagoBathroom = $this->_pagoBathroom->findByObject(array('id' => $pago));
         $cliente = $pagoSancion->getDocumento();
         $tipoSancion = $pagoSancion->getTipoSancion()->getDescripcion();
         $pago = $this->_pago->findByObject(array('id' => $pago));

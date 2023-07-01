@@ -103,6 +103,15 @@ class tarjetaController extends Controller {
         $this->_view->renderizar('index', strtolower($this->_presentRequest->getControlador()));
     }
 
+    public function bathroom() {
+        $this->_model = $this->loadModel($this->_presentRequest->getControlador());
+        $this->_view->titulo = ucwords($this->_presentRequest->getControlador()).' :: Listado';
+        $this->_view->controlador = ucwords($this->_presentRequest->getControlador());
+        $this->_view->datos = $this->_model->findBy(array('estado' => 2));
+        $this->_view->text = "Inactivas";
+        $this->_view->renderizar('index', strtolower($this->_presentRequest->getControlador()));
+    }
+
 }
 
 ?>
